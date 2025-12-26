@@ -245,8 +245,57 @@ export async function getInvoiceById(req, res){
             if(inv.owner && String(inv.owner) !== String(userId)){
                 return res.status(403).json({success:false, message:"Access denied"});
             }
+
+            return res.status(200).json({success:true, data: inv});
     } catch (error) {
         console.error("getInvoiceById error:", error);
         return res.status(500).json({ success: false, message: "Server error" });
     }       
+}
+
+// update an invoic
+
+export async function updateInvoice(req, res){
+    try {
+        const {userId} = getAuth (req) || {};   
+        if(!userId){
+            return res.status(401).json({success:false, message:"Authentication required"});
+        }   
+        const {id} = req.params;
+        const body = req.body || {};
+        const query = isObjectIdString(id) ? {_id: id, owner: userId} : {invoiceNumber: id, owner: userId};
+        const existing = await Invoice.findOne(query);
+        if(!existing){
+            return res.status(404).json({success:false, message:"Invoice not found"});
+        }
+
+        //if user change the invoice number, check for duplicates
+        if (body.invoiceNumber && String(body.invoiceNumber).trim() !== existing.invoiceNumber) {
+      const conflict = await Invoice.findOne({ invoiceNumber: String(body.invoiceNumber).trim() });
+      if (conflict && String(conflict._id) !== String(existing._id)) {
+        return res
+          .status(409)
+          .json({ success: false, message: "Invoice number already exists" });
+      }
+    }
+
+    let items = [];
+    if (Array.isArray(body.items)) items = body.items;
+    else if (typeof body.items === "string" && body.items.length) {
+      try {
+        items = JSON.parse(body.items);
+      } catch {
+        items = [];
+      }
+    }
+
+    const taxPercent = Number(
+      body.taxPercent ?? body.tax ?? body.defaultTaxPercent ?? existing.taxPercent ?? 0
+    );
+    const totals = computeTotals(items, taxPercent);
+    const fileUrls = uploadedFilesToUrls(req);
+    } catch (error) {
+        console.error("updateInvoice error:", error);
+        return res.status(500).json({ success: false, message: "Server error" });
+    }
 }
