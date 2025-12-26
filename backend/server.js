@@ -3,7 +3,8 @@ import cors from 'cors';
 import 'dotenv/config';
 import { clerkMiddleware } from '@clerk/express'
 import { connectDB } from './config/db.js';
-
+import path from 'path';
+import invoiceRouter from './routes/invoiceRouter.js';
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -20,6 +21,9 @@ connectDB();
 app.get('/', (req, res) => {
   res.send('Hello from the backend server!');
 });
+
+app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
+app.use('/api/invoice', invoiceRouter);
 
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
