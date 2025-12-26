@@ -150,3 +150,20 @@ async function tryGenerateWithModel(modelName, prompt) {
         model: usedModel
       });
     }
+
+aiInvoiceRouter.post('/generate', async(req,res)=>{
+    try {
+        if(!API_KEY){
+            return res.status(500).json({success:false, message:"Server Configuration is failed as no key found"})
+        }
+        const {prompt} = req.body;
+        if(!prompt || prompt.trim()){
+            return res.status(400).json({
+                success:false,
+                message :"Prompt rext required"
+            })
+        }
+    } catch (error) {
+        
+    }
+})
