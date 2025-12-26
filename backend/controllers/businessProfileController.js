@@ -2,7 +2,7 @@ import { getAuth } from "@clerk/express";
 import BusinessProfile from "../models/businessProfileModel";
 import { data } from "react-router-dom";
 
-const API_BASE = 'http://localhost:4000'
+const API_BASE = "http://localhost:4000";
 
 function uploadedFilesToUrls(req) {
   const urls = {};
@@ -13,8 +13,10 @@ function uploadedFilesToUrls(req) {
   const sigArr = req.files.signatureNameMeta || req.files.signature || [];
 
   if (logoArr[0]) urls.logoUrl = `${API_BASE}/uploads/${logoArr[0].filename}`;
-  if (stampArr[0]) urls.stampUrl = `${API_BASE}/uploads/${stampArr[0].filename}`;
-  if (sigArr[0]) urls.signatureUrl = `${API_BASE}/uploads/${sigArr[0].filename}`;
+  if (stampArr[0])
+    urls.stampUrl = `${API_BASE}/uploads/${stampArr[0].filename}`;
+  if (sigArr[0])
+    urls.signatureUrl = `${API_BASE}/uploads/${sigArr[0].filename}`;
 
   return urls;
 }
@@ -22,17 +24,18 @@ function uploadedFilesToUrls(req) {
 //create a business profile
 
 export async function createBusinessProfile(req, res) {
+  try {
+    const { userId } = getAuth(req);
+    if (!userId) {
+      return res
+        .status(401)
+        .json({ success: false, message: "Authentication Reqquired" });
+    }
 
-    try {
-        const {userId} = getAuth(req);
-        if(!userId){
-            return res.status(401).json({success:false, message:"Authentication Reqquired"})
-        }
+    const body = req.body || {};
+    const fileUrls = uploadedFilesToUrls(req);
 
-        const body = req.body || {};
-        const fileUrls= uploadedFilesToUrls(req);
-
-         const profile = new BusinessProfile({
+    const profile = new BusinessProfile({
       owner: userId,
       businessName: body.businessName || "ABC Solutions",
       email: body.email || "",
@@ -45,29 +48,88 @@ export async function createBusinessProfile(req, res) {
       signatureOwnerName: body.signatureOwnerName || "",
       signatureOwnerTitle: body.signatureOwnerTitle || "",
       defaultTaxPercent:
-        body.defaultTaxPercent !== undefined ? Number(body.defaultTaxPercent) : 18,
+        body.defaultTaxPercent !== undefined
+          ? Number(body.defaultTaxPercent)
+          : 18,
     });
 
-        const saved = await profile.save();
-        return res.status(200).json({success: true, message: "Bussiness profile created successfully", data:saved})
-    } catch (error) {
-        console.log("create businessprofile error", error);
-        return res.status(500).json({
-            success : false,
-            message : "Server error"
-        })
-    }
+    const saved = await profile.save();
+    return res
+      .status(200)
+      .json({
+        success: true,
+        message: "Bussiness profile created successfully",
+        data: saved,
+      });
+  } catch (error) {
+    console.log("create businessprofile error", error);
+    return res.status(500).json({
+      success: false,
+      message: "Server error",
+    });
+  }
 }
 
 //to updated business profile
 export async function updateBusinessProfile(params) {
-    try {
-        const {userId} = getAuth(req);
-        if(!userId){
-            return res.status(401).json({success:false, message:"Authentication Reqquired"})
-        }
-        
-    } catch (error) {
-        
+  try {
+    const { userId } = getAuth(req);
+    if (!userId) {
+      return res
+        .status(401)
+        .json({ success: false, message: "Authentication Reqquired" });
     }
+
+    const { id } = req.params;
+    const body = req.body || {};
+    const fileUrls = uploadedFilesToUrls(req);
+
+    const existing = await BusinessProfile.findById(id);
+    if (!existing)
+      return res.status(404).json({
+        success: false,
+        message: "Business Profile Not found",
+      });
+
+    if (existing.owner.toString() !== userId)
+      return res.status(403).json({
+        success: false,
+        message: "Forbidden L Not your profile",
+      });
+
+    const update = {};
+    if (body.businessName !== undefined)
+      update.businessName = body.businessName;
+    if (body.email !== undefined) update.email = body.email;
+    if (body.address !== undefined) update.address = body.address;
+    if (body.phone !== undefined) update.phone = body.phone;
+    if (body.gst !== undefined) update.gst = body.gst;
+
+    if (fileUrls.logoUrl) update.logoUrl = fileUrls.logoUrl;
+    else if (body.logoUrl !== undefined) update.logoUrl = body.logoUrl;
+
+    if (fileUrls.stampUrl) update.stampUrl = fileUrls.stampUrl;
+    else if (body.stampUrl !== undefined) update.stampUrl = body.stampUrl;
+
+    if (fileUrls.signatureUrl) update.signatureUrl = fileUrls.signatureUrl;
+    else if (body.signatureUrl !== undefined)
+      update.signatureUrl = body.signatureUrl;
+
+    if (body.signatureOwnerName !== undefined)
+      update.signatureOwnerName = body.signatureOwnerName;
+    if (body.signatureOwnerTitle !== undefined)
+      update.signatureOwnerTitle = body.signatureOwnerTitle;
+    if (body.defaultTaxPercent !== undefined)
+      update.defaultTaxPercent = Number(body.defaultTaxPercent);
+
+    const updated = await BusinessProfile.findByIdAndUpdate(id,update, {
+        new : true,
+        runValidators : true
+    })
+    return res.status(200).json({
+        success: true,
+        data : updated,
+        message :"Business Profile Updated successfully !"
+    })
+  } catch (error) {}
 }
