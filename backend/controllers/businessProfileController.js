@@ -21,7 +21,7 @@ function uploadedFilesToUrls(req) {
 
 //create a business profile
 
-export async function name(req, res) {
+export async function createBusinessProfile(req, res) {
 
     try {
         const {userId} = getAuth(req);
@@ -56,5 +56,18 @@ export async function name(req, res) {
             success : false,
             message : "Server error"
         })
+    }
+}
+
+//to updated business profile
+export async function updateBusinessProfile(params) {
+    try {
+        const {userId} = getAuth(req);
+        if(!userId){
+            return res.status(401).json({success:false, message:"Authentication Reqquired"})
+        }
+        
+    } catch (error) {
+        
     }
 }
