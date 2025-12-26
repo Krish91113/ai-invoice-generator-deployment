@@ -332,7 +332,12 @@ export async function updateInvoice(req, res){
       notes: body.notes,
     };
 
-
+   Object.keys(update).forEach((k)=> update[k] === undefined && delete update[k]);
+   const updated = await Invoice.findByIdAndUpdate({_id : existing._id}, {$set: update}, {new:true, runValidators:true});
+   if(!updated){
+    return res.status(500).json({success:false, message:"Failed to update invoice"});
+   }
+        return  res.status(200).json({success:true, message:"Invoice updated", data: updated});
     } catch (error) {
         console.error("updateInvoice error:", error);
         return res.status(500).json({ success: false, message: "Server error" });
