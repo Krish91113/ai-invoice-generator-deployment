@@ -139,3 +139,32 @@ export async function updateBusinessProfile(params) {
     });
   }
 }
+
+// to get my businessProfile
+
+export async function getMyBusinessProfile (req,res){
+    try {
+        const { userId } = getAuth(req);
+    if (!userId) {
+      return res
+        .status(401)
+        .json({ success: false, message: "Authentication Reqquired" });
+    }
+
+    const profile= await BusinessProfile.findOne({owner : userId}).lean();
+    if(!profile){
+        return res.status(404).json({
+            success : true,
+            message : "NO Profile Found"
+        })
+    }
+    return res.status(200).json({success:true, data:profile})
+
+    } catch (error) {
+    console.log("GetMy businessprofile error", error);
+    return res.status(500).json({
+      success: false,
+      message: "Server error",
+    });
+  }
+}
