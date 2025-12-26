@@ -17,3 +17,6 @@ const businessProfileSchema = new mongoose.Schema({
     defaultTaxPercent : {type:Number , required:false, default: 18},
 
 }, {timestamps: true})
+
+const BusinessProfile = mongoose.model.BusinessProfile || mongoose.model('BusinessProfile', businessProfileSchema);
+export default BusinessProfile;
