@@ -131,5 +131,11 @@ export async function updateBusinessProfile(params) {
         data : updated,
         message :"Business Profile Updated successfully !"
     })
-  } catch (error) {}
+  } catch (error) {
+    console.log("update businessprofile error", error);
+    return res.status(500).json({
+      success: false,
+      message: "Server error",
+    });
+  }
 }
