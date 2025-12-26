@@ -163,6 +163,55 @@ aiInvoiceRouter.post('/generate', async(req,res)=>{
                 message :"Prompt rext required"
             })
         }
+        const fullPrompt = buildInvoicePrompt(prompt);
+        
+      let lastErr = null;
+    let lastText = null;
+    let usedModel = null;
+
+    for (const m of MODEL_CANDIDATES) {
+      try {
+        const { text, modelName } = await tryGenerateWithModel(m, fullPrompt);
+        lastText = text;
+        usedModel = modelName;
+        if (text && text.trim()) break;
+      } catch (err) {
+        console.warn(`Model ${m} failed:`, err?.message || err);
+        lastErr = err;
+        continue;
+      }
+    }
+
+    if (!lastText) {
+      const errMsg =
+        (lastErr && lastErr.message) ||
+        "All candidate models failed. Check API key, network, or model availability.";
+      console.error("AI generation failed (no text):", errMsg);
+      return res.status(502).json({
+        success: false,
+        message: "AI generation failed",
+        detail: errMsg
+      });
+    }
+
+    const text = lastText.trim();
+    const firstBrace = text.indexOf("{");
+    const lastBrace = text.lastIndexOf("}");
+    if (firstBrace === -1 || lastBrace === -1 || lastBrace <= firstBrace) {
+      console.error("AI response did not contain JSON object:", {
+        usedModel,
+        text
+      });
+      return res.status(502).json({
+        success: false,
+        message: "AI returned malformed response (no JSON found)",
+        raw: text,
+        model: usedModel
+      });
+    }
+    const jsonText = text.slice(firstBrace, lastBrace + 1);
+    let data;
+    
     } catch (error) {
         
     }
