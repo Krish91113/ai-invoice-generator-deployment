@@ -211,7 +211,19 @@ aiInvoiceRouter.post('/generate', async(req,res)=>{
     }
     const jsonText = text.slice(firstBrace, lastBrace + 1);
     let data;
-    
+    try {
+        data = JSON.parse(jsonText);
+    } catch (error) {
+        console.error("failed to parse jso data from ai response", error,
+           { model:usedModel,
+            jsonText
+           }
+        );
+        return res.status(502).json({
+            success: false,
+            message:"Ai return invalid json"
+        })
+    }
     } catch (error) {
         
     }
