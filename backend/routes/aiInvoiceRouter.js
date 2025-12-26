@@ -1,6 +1,8 @@
 import express from "express"
 import { GoogleGenAI } from "@google/genai"
 import dotenv from "dotenv"
+import { model } from "mongoose";
+import { raw } from "body-parser";
 
 dotenv.config();
 const aiInvoiceRouter = express.Router();
@@ -221,10 +223,24 @@ aiInvoiceRouter.post('/generate', async(req,res)=>{
         );
         return res.status(502).json({
             success: false,
-            message:"Ai return invalid json"
+            message:"Ai return invalid json",
+            model : usedModel,
+            raw:text
         })
     }
+        return res.status(200).json({
+            success: true,
+            model:usedModel,
+            data
+        })
     } catch (error) {
-        
+        console.error("AI INvoice generation error", error)
+        return res.status(500).json({
+            success: false,
+            message : "Ai generation failed",
+            detail : err?.message || String(error)
+        })
     }
-})
+});
+
+export default aiInvoiceRouter
