@@ -11,7 +11,8 @@ function NavBar() {
             <nav className={navbarStyles.nav}>
                 <div className={navbarStyles.logoSection}>
                     <Link to='/' className={navbarStyles.logoLink}>
-                    
+                        <img src={logo} alt="logo" className={navbarStyles.logoImage} />
+                        <span className={navbarStyles.logoText}> Ai Invoice</span>
                     </Link>
                 </div>
             </nav>
