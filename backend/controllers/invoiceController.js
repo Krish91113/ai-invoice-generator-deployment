@@ -294,6 +294,45 @@ export async function updateInvoice(req, res){
     );
     const totals = computeTotals(items, taxPercent);
     const fileUrls = uploadedFilesToUrls(req);
+
+        const update = {
+      invoiceNumber: body.invoiceNumber,
+      issueDate: body.issueDate,
+      dueDate: body.dueDate,
+      fromBusinessName: body.fromBusinessName,
+      fromEmail: body.fromEmail,
+      fromAddress: body.fromAddress,
+      fromPhone: body.fromPhone,
+      fromGst: body.fromGst,
+      client:
+        typeof body.client === "string" && body.client.trim()
+          ? { name: body.client }
+          : body.client || existing.client || {},
+      items,
+      subtotal: totals.subtotal,
+      tax: totals.tax,
+      total: totals.total,
+      currency: body.currency,
+      status: body.status ? String(body.status).toLowerCase() : undefined,
+      taxPercent,
+      logoDataUrl:
+        fileUrls.logoDataUrl ||
+        (body.logoDataUrl || body.logo) ||
+        undefined,
+      stampDataUrl:
+        fileUrls.stampDataUrl ||
+        (body.stampDataUrl || body.stamp) ||
+        undefined,
+      signatureDataUrl:
+        fileUrls.signatureDataUrl ||
+        (body.signatureDataUrl || body.signature) ||
+        undefined,
+      signatureName: body.signatureName,
+      signatureTitle: body.signatureTitle,
+      notes: body.notes,
+    };
+
+
     } catch (error) {
         console.error("updateInvoice error:", error);
         return res.status(500).json({ success: false, message: "Server error" });
