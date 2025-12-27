@@ -1,9 +1,17 @@
 import React from 'react'
 import NavBar from '../component/NavBar'
+import Hero from '../component/Hero'
 
 function Home() {
   return (
-    <NavBar/>
+    <div>
+      
+      <NavBar/>
+      <main className=''>
+      <Hero/>
+      </main>
+    </div>
+    
   )
 }
 
