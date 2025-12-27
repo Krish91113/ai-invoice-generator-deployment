@@ -8,7 +8,7 @@ function NavBar() {
   const [open, setOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const { user } = useUser();
-  const { getToken, isSignedIn } = useAuth;
+  const { getToken, isSignedIn } = useAuth();
   const clerk = useClerk();
   const navigate = useNavigate();
   const profileRef = useRef(null);
@@ -37,7 +37,7 @@ function NavBar() {
         return null;
       }
     },
-    { getToken }
+    [ getToken ]
   );
 
   //keetp the localstorage token in sync with clear with state
@@ -70,18 +70,18 @@ function NavBar() {
 
   //if login then navigate to dashboard
   useEffect(() => {
-    if (isSignedIn) {
-      const pathname = window.location.pathname || "/";
-      if (
-        pathname === "/login" ||
-        pathname === "/signup" ||
-        pathname === "/" ||
-        pathname.startsWith("/auth")
-      ) {
-        navigate("/app/dashboard", { replace: true });
-      }
+  if (isSignedIn) {
+    const pathname = window.location.pathname || "/";
+    if (
+      pathname === "/login" ||
+      pathname === "/signup" ||
+      pathname === "/" ||
+      pathname.startsWith("/auth")
+    ) {
+      navigate("/app/dashboard", { replace: true });
     }
-  });
+  }
+}, [isSignedIn, navigate]); // Added dependency array
 
   // Close profile popover on outside click
   useEffect(() => {
