@@ -385,6 +385,11 @@ function AppShell() {
             </div>
         )}
         {/* MAIN CONTENT NAVBAR */}
+        <div className="flex-1 min-w-0">
+        <header className="">
+
+        </header>
+        </div>
       </div>
     </div>
   );
