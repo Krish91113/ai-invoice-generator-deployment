@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { appShellStyles } from "../assets/dummyStyles";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useClerk, useUser } from "@clerk/clerk-react";
 
 function AppShell() {
@@ -34,8 +34,14 @@ function AppShell() {
             <div className={appShellStyles.sidebarGradient}>
                 <div className={appShellStyles.sidebarContainer}>
                     <div>
-                        <div className={appShellStyles}>
+                        <div className={`${appShellStyles.logoContainer} ${
+                            collapsed ? appShellStyles.logoContainerCollapsed : ""
+                        }`}>
+                            <Link to='/' className={appShellStyles.logoLink}>
+                                <div className="relative">
 
+                                </div>
+                            </Link>
                         </div>
                     </div>
                 </div>
