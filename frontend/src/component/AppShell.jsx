@@ -50,8 +50,9 @@ function AppShell() {
                       
                     </div>  
                     {!collapsed && (
-                        <div >
-
+                        <div className={appShellStyles.logoTextContainer}>
+                            <span className={appShellStyles.logoText}>AI Invoice</span>
+                            <div className={appShellStyles.logoUnderline}></div>
                         </div>
                     )}
                   </Link>
