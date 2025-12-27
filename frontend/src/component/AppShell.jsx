@@ -35,7 +35,9 @@ function AppShell() {
   useEffect(() => {
     try {
       localStorage.setItem("sidebar_collapsed", collapsed ? "true" : "false");
-    } catch {}
+    } catch (e) {
+      // Silently handle localStorage errors
+    }
   }, [collapsed]);
 
   // Lock body scroll when mobile drawer is open
@@ -54,7 +56,15 @@ function AppShell() {
   }, []);
 
   const toggleSidebar = () => {
-    setCollapsed(!collapsed);
+    setCollapsed((prev) => !prev);
+  };
+
+  const handleMobileOpen = () => {
+    setMobileOpen(true);
+  };
+
+  const handleMobileClose = () => {
+    setMobileOpen(false);
   };
 
   // display name helper
@@ -86,6 +96,24 @@ function AppShell() {
       console.warn("Signout error", error);
       navigate("/login");
     }
+  };
+
+  const handleLogout = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    logout();
+  };
+
+  const handleMobileLogout = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setMobileOpen(false);
+    logout();
+  };
+
+  const handleCreateInvoice = (e) => {
+    e.preventDefault();
+    navigate("/app/create-invoice");
   };
 
   // Icons
@@ -159,10 +187,10 @@ function AppShell() {
     </svg>
   );
 
-  const CollapseIcon = ({ className = "w-4 h-4", collapsed }) => (
+  const CollapseIcon = ({ className = "w-4 h-4", collapsed: isCollapsed }) => (
     <svg
       className={`${className} transition-transform duration-300 ${
-        collapsed ? "rotate-180" : ""
+        isCollapsed ? "rotate-180" : ""
       }`}
       viewBox="0 0 24 24"
       fill="none"
@@ -174,6 +202,30 @@ function AppShell() {
         strokeLinejoin="round"
         d="M11 19l-7-7 7-7m8 14l-7-7 7-7"
       />
+    </svg>
+  );
+
+  const MenuIcon = ({ className = "w-6 h-6" }) => (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+    >
+      <path d="M4 6h16M4 12h16M4 18h16" />
+    </svg>
+  );
+
+  const CloseIcon = ({ className = "w-6 h-6" }) => (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+    >
+      <path d="M6 18L18 6M6 6l12 12" />
     </svg>
   );
 
@@ -190,7 +242,7 @@ function AppShell() {
             : appShellStyles.sidebarLinkInactive
         }
       `}
-      onClick={() => setMobileOpen(false)}
+      onClick={handleMobileClose}
     >
       {({ isActive }) => (
         <>
@@ -239,8 +291,8 @@ function AppShell() {
                         src={logo}
                         alt="logo"
                         className={appShellStyles.logoImage}
+                        style={{ position: "relative", zIndex: 1 }}
                       />
-                      <div className="absolute inset-0 rounded-lg blur-sm group-hover:blur-md transition-all duration-300 pointer-events-none" />
                     </div>
                     {!collapsed && (
                       <div className={appShellStyles.logoTextContainer}>
@@ -281,8 +333,10 @@ function AppShell() {
                   {!collapsed ? (
                     <button
                       type="button"
+                      aria-label="Logout"
                       className={`${appShellStyles.logoutButton} cursor-pointer`}
-                      onClick={logout}
+                      onClick={handleLogout}
+                      style={{ position: "relative", zIndex: 10 }}
                     >
                       <LogoutIcon className={appShellStyles.logoutIcon} />
                       <span>Logout</span>
@@ -290,8 +344,10 @@ function AppShell() {
                   ) : (
                     <button
                       type="button"
-                      onClick={logout}
+                      aria-label="Logout"
+                      onClick={handleLogout}
                       className="w-full flex items-center justify-center p-3 rounded-xl text-red-600 hover:bg-red-50 hover:shadow-md transition-all duration-300 cursor-pointer"
+                      style={{ position: "relative", zIndex: 10 }}
                     >
                       <LogoutIcon className="w-5 h-5 hover:scale-110 transition-transform" />
                     </button>
@@ -300,8 +356,10 @@ function AppShell() {
                   <div className={appShellStyles.collapseSection}>
                     <button
                       type="button"
+                      aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
                       onClick={toggleSidebar}
                       className={`${appShellStyles.collapseButtonCollapsed} cursor-pointer`}
+                      style={{ position: "relative", zIndex: 10 }}
                     >
                       {!collapsed && <span>Collapse</span>}
                       <CollapseIcon collapsed={collapsed} />
@@ -315,17 +373,31 @@ function AppShell() {
 
         {/* mobile view */}
         {mobileOpen && (
-          <div className={appShellStyles.mobileOverlay}>
+          <div 
+            className={appShellStyles.mobileOverlay}
+            style={{ zIndex: 50 }}
+          >
             <div
               className={appShellStyles.mobileBackdrop}
-              onClick={() => setMobileOpen(false)}
+              onClick={handleMobileClose}
+              role="button"
+              tabIndex={0}
+              aria-label="Close mobile menu"
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  handleMobileClose();
+                }
+              }}
             />
-            <div className={appShellStyles.mobileSidebar}>
+            <div 
+              className={appShellStyles.mobileSidebar}
+              style={{ position: "relative", zIndex: 51 }}
+            >
               <div className="flex items-center justify-between p-4">
                 <Link
                   to="/"
                   className={appShellStyles.mobileLogoLink}
-                  onClick={() => setMobileOpen(false)}
+                  onClick={handleMobileClose}
                 >
                   <img
                     src={logo}
@@ -338,25 +410,19 @@ function AppShell() {
                 </Link>
                 <button
                   type="button"
+                  aria-label="Close mobile menu"
                   className={`${appShellStyles.mobileCloseButton} cursor-pointer`}
-                  onClick={() => setMobileOpen(false)}
+                  onClick={handleMobileClose}
+                  style={{ position: "relative", zIndex: 52 }}
                 >
-                  <svg
-                    className={appShellStyles.mobileCloseIcon}
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                  >
-                    <path d="M6 18L18 6M6 6l12 12" />
-                  </svg>
+                  <CloseIcon className={appShellStyles.mobileCloseIcon} />
                 </button>
               </div>
 
               {/* navlink */}
               <nav className={appShellStyles.mobileNav}>
                 <NavLink
-                  onClick={() => setMobileOpen(false)}
+                  onClick={handleMobileClose}
                   to="/app/dashboard"
                   className={({ isActive }) =>
                     `${appShellStyles.mobileNavLink} ${
@@ -369,7 +435,7 @@ function AppShell() {
                   <DashboardIcon /> Dashboard
                 </NavLink>
                 <NavLink
-                  onClick={() => setMobileOpen(false)}
+                  onClick={handleMobileClose}
                   to="/app/invoices"
                   className={({ isActive }) =>
                     `${appShellStyles.mobileNavLink} ${
@@ -382,7 +448,7 @@ function AppShell() {
                   <InvoiceIcon /> Invoices
                 </NavLink>
                 <NavLink
-                  onClick={() => setMobileOpen(false)}
+                  onClick={handleMobileClose}
                   to="/app/create-invoice"
                   className={({ isActive }) =>
                     `${appShellStyles.mobileNavLink} ${
@@ -395,7 +461,7 @@ function AppShell() {
                   <CreateIcon /> Create Invoice
                 </NavLink>
                 <NavLink
-                  onClick={() => setMobileOpen(false)}
+                  onClick={handleMobileClose}
                   to="/app/business"
                   className={({ isActive }) =>
                     `${appShellStyles.mobileNavLink} ${
@@ -412,11 +478,10 @@ function AppShell() {
               <div className={appShellStyles.mobileLogoutSection}>
                 <button
                   type="button"
-                  onClick={() => {
-                    setMobileOpen(false);
-                    logout();
-                  }}
+                  aria-label="Logout"
+                  onClick={handleMobileLogout}
                   className={`${appShellStyles.mobileLogoutButton} cursor-pointer`}
+                  style={{ position: "relative", zIndex: 52 }}
                 >
                   <LogoutIcon /> Logout
                 </button>
@@ -433,31 +498,27 @@ function AppShell() {
                 ? appShellStyles.headerScrolled
                 : appShellStyles.headerNotScrolled
             }`}
+            style={{ position: "relative", zIndex: 40 }}
           >
             <div className={appShellStyles.headerTopSection}>
               <div className={appShellStyles.headerContent}>
-                {/* FIX: Changed from setMobileOpen(false) to setMobileOpen(true) */}
                 <button
                   type="button"
-                  onClick={() => setMobileOpen(true)}
+                  aria-label="Open mobile menu"
+                  onClick={handleMobileOpen}
                   className={`${appShellStyles.mobileMenuButton} cursor-pointer`}
+                  style={{ position: "relative", zIndex: 41 }}
                 >
-                  <svg
-                    className={appShellStyles.mobileMenuIcon}
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                  >
-                    <path d="M4 6h16M4 12h16M4 18h16" />
-                  </svg>
+                  <MenuIcon className={appShellStyles.mobileMenuIcon} />
                 </button>
 
                 {!isMobile && (
                   <button
                     type="button"
+                    aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
                     onClick={toggleSidebar}
                     className={`${appShellStyles.desktopCollapseButton} cursor-pointer`}
+                    style={{ position: "relative", zIndex: 41 }}
                   >
                     <CollapseIcon collapsed={collapsed} />
                   </button>
@@ -480,8 +541,10 @@ function AppShell() {
             <div className={appShellStyles.headerActions}>
               <button
                 type="button"
-                onClick={() => navigate("/app/create-invoice")}
+                aria-label="Create Invoice"
+                onClick={handleCreateInvoice}
                 className={`${appShellStyles.ctaButton} cursor-pointer`}
+                style={{ position: "relative", zIndex: 41 }}
               >
                 <CreateIcon className={appShellStyles.ctaIcon} />
                 <span className="hidden xs:inline">Create Invoice</span>
