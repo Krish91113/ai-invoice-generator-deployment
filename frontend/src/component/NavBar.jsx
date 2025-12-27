@@ -9,7 +9,7 @@ function NavBar() {
     const [open, setOpen] = useState(false);
     const [profileOpen, setProfileOpen]= useState(false);
     const {user} = useUser();
-    const [getToken, isSignedIn] = useAuth();
+    const {getToken, isSignedIn} = useAuth
     const clerk = useClerk();
     const navigate = useNavigate();
     const profileRef = useRef(null);
@@ -17,6 +17,30 @@ function NavBar() {
     
 
     //functions
+    function openSignIn(){
+        try {
+            if(clerk && typeof clerk.openSignIn === "function"){
+                clerk.openSignIn();
+            }else{
+                navigate("/login")
+            }
+        } catch (error) {
+            console.error("openSignIN failed", error)
+            navigate("/login")
+        }
+    }
+    function openSignUp(){
+        try {
+            if(clerk && typeof clerk.openSignUp === "function"){
+                clerk.openSignUp();
+            }else{
+                navigate("/signup")
+            }
+        } catch (error) {
+            console.error("openSignup failed", error)
+            navigate("/signup")
+        }
+    }
   return (
     <header className={navbarStyles.header}>
         <div className={navbarStyles.container}>
@@ -41,6 +65,9 @@ function NavBar() {
                         <SignedOut>
                             <button onClick={openSignIn} className={navbarStyles.signInButton } type="button">
                                 Sign In
+                            </button>
+                            <button onClick={openSignUp} className={navbarStyles.signUpButton} type="button"> 
+                                Sign Up
                             </button>
                         </SignedOut>
                     </div>
