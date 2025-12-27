@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { appShellStyles } from "../assets/dummyStyles";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useClerk, useUser } from "@clerk/clerk-react";
 import logo from "../assets/logo.png";
+
 function AppShell() {
   const navigate = useNavigate();
   const { signOut } = useClerk();
@@ -20,7 +21,7 @@ function AppShell() {
   const [scrolled, setScrolled] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
 
-   // Check screen size for responsive behavior
+  // Check screen size for responsive behavior
   useEffect(() => {
     const checkScreenSize = () => {
       setIsMobile(window.innerWidth < 1024);
@@ -52,10 +53,21 @@ function AppShell() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const toggleSidebar = ()=>{setCollapsed(!collapsed)};
+  const toggleSidebar = () => {
+    setCollapsed(!collapsed);
+  };
 
-  //for icons
-   const DashboardIcon = ({ className = "w-5 h-5" }) => (
+  // logout
+  const logout = async()=>{
+    try {
+        await signOut();
+    } catch (error) {
+        console.warn("Signout eror", error)
+        navigate("/login")
+    }
+  }
+  // Icons
+  const DashboardIcon = ({ className = "w-5 h-5" }) => (
     <svg
       className={className}
       viewBox="0 0 24 24"
@@ -179,6 +191,7 @@ function AppShell() {
       )}
     </NavLink>
   );
+
   return (
     <div className={appShellStyles.root}>
       <div className={appShellStyles.layout}>
@@ -199,23 +212,68 @@ function AppShell() {
                   }`}
                 >
                   <Link to="/" className={appShellStyles.logoLink}>
-                    <div className="relative ">
+                    <div className="relative">
                       <img
                         src={logo}
                         alt="logo"
                         className={appShellStyles.logoImage}
                       />
-                      <div className="absolute inset-0 rounded-lg blur-sm group-hover:blur-md transition-all duration-300"/>
-                      
-                    </div>  
+                      {/* FIX: Added pointer-events-none to prevent blocking clicks */}
+                      <div className="absolute inset-0 rounded-lg blur-sm group-hover:blur-md transition-all duration-300 pointer-events-none" />
+                    </div>
                     {!collapsed && (
-                        <div className={appShellStyles.logoTextContainer}>
-                            <span className={appShellStyles.logoText}>AI Invoice</span>
-                            <div className={appShellStyles.logoUnderline}></div>
-                        </div>
+                      <div className={appShellStyles.logoTextContainer}>
+                        <span className={appShellStyles.logoText}>
+                          AI Invoice
+                        </span>
+                        <div className={appShellStyles.logoUnderline}></div>
+                      </div>
                     )}
                   </Link>
+
+                  {/* FIX: Button always visible with proper styling */}
+                  <button
+                    onClick={toggleSidebar}
+                    className={`${appShellStyles.collapseButton} cursor-pointer relative z-50`}
+                    style={{ pointerEvents: 'auto' }}
+                    title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+                    type="button"
+                  >
+                    <CollapseIcon collapsed={collapsed} />
+                  </button>
                 </div>
+
+                {/* for navigation */}
+                <nav className={appShellStyles.nav}>
+                  <SidebarLink to="/app/dashboard" icon={<DashboardIcon />}>
+                    Dashboard
+                  </SidebarLink>
+                  <SidebarLink to="/app/invoices" icon={<InvoiceIcon />}>
+                    Invoices
+                  </SidebarLink>
+                  <SidebarLink to="/app/create-invoice" icon={<CreateIcon />}>
+                    Create Invoice
+                  </SidebarLink>
+                  <SidebarLink to="/app/business" icon={<ProfileIcon />}>
+                    Business Profile
+                  </SidebarLink>
+                </nav>
+              </div>
+              <div className={appShellStyles.userSection}>
+                    <div className={`${appShellStyles.userDivider} ${
+                        collapsed ? appShellStyles.userDividerCollapsed : appShellStyles.userDividerExpanded
+                    }`}>
+                        {!collapsed ? (
+                            <button className={appShellStyles.logoutButton} onClick={logout}>
+                                <LogoutIcon className={appShellStyles.logoutIcon}/>
+                                <span>Logout</span>
+                            </button>
+                        ) : (
+                            <button onClick={logout} className="w-full items-center justify-center p-3 rounded-xl text-red-600 hover:bg-red-50 hover:shadow-md transition-all duration-300">
+                                <LogoutIcon className="w-5 h-5 hover:scale-100 transition-transform"/>
+                            </button>
+                        )}
+                    </div>
               </div>
             </div>
           </div>
