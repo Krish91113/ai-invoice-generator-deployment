@@ -386,7 +386,9 @@ function AppShell() {
         )}
         {/* MAIN CONTENT NAVBAR */}
         <div className="flex-1 min-w-0">
-        <header className="">
+        <header className={`${appShellStyles.header} ${
+          scrolled ? appShellStyles.headerScrolled : appShellStyles.headerNotScrolled
+        }`}>
 
         </header>
         </div>
