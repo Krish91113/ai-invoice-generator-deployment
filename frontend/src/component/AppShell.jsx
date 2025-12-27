@@ -273,11 +273,22 @@ function AppShell() {
                                 <LogoutIcon className="w-5 h-5 hover:scale-100 transition-transform"/>
                             </button>
                         )}
+                        <div className={appShellStyles.collapseSection}>
+                          <button onClick={toggleSidebar} className={`${appShellStyles.collapseButtonCollapsed} ${
+                            collapsed ? appShellStyles.collapseButtonCollapsed : ""
+                          }`}>
+                            {!collapsed && (
+                              <span>{collapsed ? "Expand" : "Collapse"}</span>
+                            )}
+                            <CollapseIcon collapsed={collapsed}/>
+                          </button>
+                        </div>
                     </div>
               </div>
             </div>
           </div>
         </aside>
+        {/*mobile view */}
       </div>
     </div>
   );
