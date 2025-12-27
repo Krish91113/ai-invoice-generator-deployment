@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { navbarStyles } from "../assets/dummyStyles";
 import logo from "../assets/logo.png";
 import { Link, useNavigate } from "react-router-dom";
@@ -14,7 +14,55 @@ function NavBar() {
   const profileRef = useRef(null);
   const TOKEN_KEY = "token";
 
-  //
+  //for token generation
+  const fetchAndStoreToken = useCallback(async ()=>{
+    try {
+        if(!getToken){
+            return null;
+        }
+        const token = await getToken().catch(()=> null);
+        if(token){
+            try{
+                localStorage.setItem(TOKEN_KEY, token);
+                console.log(token);
+            }catch(e){
+                console.error(error)
+            }
+            return token;
+        }
+        else{
+            return null;
+        }
+    } catch (error) {
+        return null;
+    }
+  }, {getToken})
+
+//keetp the localstorage token in sync with clear with state
+useEffect(() => {
+    let mounted = true;
+
+    // The async function is defined and called immediately inside the effect
+    (async () => {
+        if (isSignedIn) {
+            const t = await fetchAndStoreToken({ template: "default" }).catch(() => null);
+            if (!t && mounted) {
+                await fetchAndStoreToken({ forceRefresh: true }).catch(() => null);
+            }
+        } else {
+            try {
+                localStorage.removeItem(TOKEN_KEY);
+            } catch (error) {
+                // Silently handle storage errors
+            }
+        }
+    })(); // This closes the IIFE
+
+    // The cleanup function must be inside the useEffect body
+    return () => {
+        mounted = false;
+    };
+}, [isSignedIn, user, fetchAndStoreToken]); // Dependency array belongs to useEffect
 
 
   //functions
