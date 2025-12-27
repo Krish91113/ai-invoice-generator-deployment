@@ -373,12 +373,18 @@ function AppShell() {
                 </NavLink>
               </nav>
 
-              <div className="">
-
+              <div className={appShellStyles.mobileLogoutSection}>
+                  <button onClick={()=>{
+                    setMobileOpen(false);
+                    logout();
+                  }} className={appShellStyles.mobileLogoutButton}>
+                    <LogoutIcon/>Logout
+                  </button>
               </div>
                 </div>
             </div>
         )}
+        {/* MAIN CONTENT NAVBAR */}
       </div>
     </div>
   );
