@@ -56,7 +56,25 @@ function AppShell() {
   const toggleSidebar = () => {
     setCollapsed(!collapsed);
   };
+  // display name helper
+  const displayName = (() => {
+    if (!user) return "User";
+    const name = user.fullName || user.firstName || user.username || "";
+    return name.trim() || (user.email || "").split?.("@")?.[0] || "User";
+  })();
 
+  const firstName = () => {
+    const parts = displayName.split(" ").filter(Boolean);
+    return parts.length ? parts[0] : displayName;
+  };
+
+  const initials = () => {
+    const parts = displayName.split(" ").filter(Boolean);
+    if (parts.length === 1) return parts[0].charAt(0).toUpperCase();
+    return (
+      parts[0].charAt(0) + parts[parts.length - 1].charAt(0)
+    ).toUpperCase();
+  };
   // logout
   const logout = async()=>{
     try {
@@ -409,7 +427,14 @@ function AppShell() {
                 </button>
               )}
 
-              <div></div>
+              <div className={appShellStyles.welcomeContainer}>
+                <h2 className={appShellStyles.welcomeTitle}>
+                  Welcome back , {" "}
+                  <span className={appShellStyles.welcomeName}>
+                    {firstName()}
+                  </span>
+                </h2>
+              </div>
             </div>
           </div>
         </header>
