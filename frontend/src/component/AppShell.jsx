@@ -391,7 +391,25 @@ function AppShell() {
         }`}>
           <div className={appShellStyles.headerTopSection}>
             <div className={appShellStyles.headerContent}>
-              
+              <button onClick={()=> setMobileOpen(false)} className={appShellStyles.mobileMenuButton}>
+                <svg
+                    className={appShellStyles.mobileMenuIcon}
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
+                    <path d="M4 6h16M4 12h16M4 18h16" />
+                  </svg>
+
+              </button>
+              {!isMobile && (
+                <button onClick={toggleSidebar} className={appShellStyles.desktopCollapseButton}>
+                  <CollapseIcon collapsed={collapsed} />
+                </button>
+              )}
+
+              <div></div>
             </div>
           </div>
         </header>
