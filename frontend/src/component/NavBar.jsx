@@ -15,66 +15,91 @@ function NavBar() {
   const TOKEN_KEY = "token";
 
   //for token generation
-  const fetchAndStoreToken = useCallback(async ()=>{
-    try {
-        if(!getToken){
-            return null;
+  const fetchAndStoreToken = useCallback(
+    async () => {
+      try {
+        if (!getToken) {
+          return null;
         }
-        const token = await getToken().catch(()=> null);
-        if(token){
-            try{
-                localStorage.setItem(TOKEN_KEY, token);
-                console.log(token);
-            }catch(e){
-                console.error(error)
-            }
-            return token;
+        const token = await getToken().catch(() => null);
+        if (token) {
+          try {
+            localStorage.setItem(TOKEN_KEY, token);
+            console.log(token);
+          } catch (e) {
+            console.error(error);
+          }
+          return token;
+        } else {
+          return null;
         }
-        else{
-            return null;
-        }
-    } catch (error) {
+      } catch (error) {
         return null;
-    }
-  }, {getToken})
+      }
+    },
+    { getToken }
+  );
 
-//keetp the localstorage token in sync with clear with state
-useEffect(() => {
+  //keetp the localstorage token in sync with clear with state
+  useEffect(() => {
     let mounted = true;
 
     // The async function is defined and called immediately inside the effect
     (async () => {
-        if (isSignedIn) {
-            const t = await fetchAndStoreToken({ template: "default" }).catch(() => null);
-            if (!t && mounted) {
-                await fetchAndStoreToken({ forceRefresh: true }).catch(() => null);
-            }
-        } else {
-            try {
-                localStorage.removeItem(TOKEN_KEY);
-            } catch (error) {
-                // Silently handle storage errors
-            }
+      if (isSignedIn) {
+        const t = await fetchAndStoreToken({ template: "default" }).catch(
+          () => null
+        );
+        if (!t && mounted) {
+          await fetchAndStoreToken({ forceRefresh: true }).catch(() => null);
         }
+      } else {
+        try {
+          localStorage.removeItem(TOKEN_KEY);
+        } catch (error) {
+          // Silently handle storage errors
+        }
+      }
     })(); // This closes the IIFE
 
     // The cleanup function must be inside the useEffect body
     return () => {
-        mounted = false;
+      mounted = false;
     };
-}, [isSignedIn, user, fetchAndStoreToken]); // Dependency array belongs to useEffect
+  }, [isSignedIn, user, fetchAndStoreToken]); // Dependency array belongs to useEffect
 
-//if login then navigate to dashboard
-useEffect(()=>{
-    if(isSignedIn){
-        const pathname = window.location.pathname || "/";
-        if(
-            pathname === "/login" || pathname === "/signup" || pathname === "/" || pathname.startsWith("/auth")
-        ){
-            navigate("/app/dashboard", {replace:true})
-        }
+  //if login then navigate to dashboard
+  useEffect(() => {
+    if (isSignedIn) {
+      const pathname = window.location.pathname || "/";
+      if (
+        pathname === "/login" ||
+        pathname === "/signup" ||
+        pathname === "/" ||
+        pathname.startsWith("/auth")
+      ) {
+        navigate("/app/dashboard", { replace: true });
+      }
     }
-})
+  });
+
+  // Close profile popover on outside click
+  useEffect(() => {
+    function onDocClick(e) {
+      if (!profileRef.current) return;
+      if (!profileRef.current.contains(e.target)) {
+        setProfileOpen(false);
+      }
+    }
+    if (profileOpen) {
+      document.addEventListener("mousedown", onDocClick);
+      document.addEventListener("touchstart", onDocClick);
+    }
+    return () => {
+      document.removeEventListener("mousedown", onDocClick);
+      document.removeEventListener("touchstart", onDocClick);
+    };
+  }, [profileOpen]);
 
   //functions
   function openSignIn() {
@@ -148,43 +173,66 @@ useEffect(()=>{
               </SignedOut>
             </div>
             {/* MObile toggle view  */}
-            <button onClick={()=> setOpen(!open) } className={navbarStyles.mobileMenuButton}>
-                <div className={navbarStyles.mobileMenuIcon}>
-                    <span className={`${navbarStyles.mobileMenuLine1} ${
-                        open ? navbarStyles.mobileMenuLine1Open : navbarStyles.mobileMenuLine1Closed
-                    }`}></span>
-                    <span className={`${navbarStyles.mobileMenuLine2} ${
-                        open ? navbarStyles.mobileMenuLine2Open : navbarStyles.mobileMenuLine2Closed
-                    }`}></span>
-                    <span className={`${navbarStyles.mobileMenuLine3} ${
-                        open ? navbarStyles.mobileMenuLine3Open : navbarStyles.mobileMenuLine3Closed
-                    }`}></span>
-                </div>
+            <button
+              onClick={() => setOpen(!open)}
+              className={navbarStyles.mobileMenuButton}
+            >
+              <div className={navbarStyles.mobileMenuIcon}>
+                <span
+                  className={`${navbarStyles.mobileMenuLine1} ${
+                    open
+                      ? navbarStyles.mobileMenuLine1Open
+                      : navbarStyles.mobileMenuLine1Closed
+                  }`}
+                ></span>
+                <span
+                  className={`${navbarStyles.mobileMenuLine2} ${
+                    open
+                      ? navbarStyles.mobileMenuLine2Open
+                      : navbarStyles.mobileMenuLine2Closed
+                  }`}
+                ></span>
+                <span
+                  className={`${navbarStyles.mobileMenuLine3} ${
+                    open
+                      ? navbarStyles.mobileMenuLine3Open
+                      : navbarStyles.mobileMenuLine3Closed
+                  }`}
+                ></span>
+              </div>
             </button>
           </div>
         </nav>
       </div>
-      <div className={`${open ? "block" : "hidden"} ${navbarStyles.mobileMenu}`}>
-            <div className={navbarStyles.mobileMenuContainer}>
-                    <a href="#features" className={navbarStyles.mobileNavLink}>
-                        Features
-                    </a>
-                     <a href="#pricing" className={navbarStyles.mobileNavLink}>
-                        Pricing
-                    </a>
-                    <div className={navbarStyles.mobileAuthSection}>
-                        <SignedOut>
-                            <button onClick={openSignIn} className={navbarStyles.mobileSignIn}>
-                                Sign in
-                            </button>
-                        </SignedOut>
-                        <SignedOut>
-                            <button onClick={openSignUp} className={navbarStyles.mobileSignUp}>
-                                Sign Up
-                            </button>
-                        </SignedOut>
-                    </div>
-            </div>
+      <div
+        className={`${open ? "block" : "hidden"} ${navbarStyles.mobileMenu}`}
+      >
+        <div className={navbarStyles.mobileMenuContainer}>
+          <a href="#features" className={navbarStyles.mobileNavLink}>
+            Features
+          </a>
+          <a href="#pricing" className={navbarStyles.mobileNavLink}>
+            Pricing
+          </a>
+          <div className={navbarStyles.mobileAuthSection}>
+            <SignedOut>
+              <button
+                onClick={openSignIn}
+                className={navbarStyles.mobileSignIn}
+              >
+                Sign in
+              </button>
+            </SignedOut>
+            <SignedOut>
+              <button
+                onClick={openSignUp}
+                className={navbarStyles.mobileSignUp}
+              >
+                Sign Up
+              </button>
+            </SignedOut>
+          </div>
+        </div>
       </div>
     </header>
   );
