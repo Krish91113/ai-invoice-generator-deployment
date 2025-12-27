@@ -292,8 +292,28 @@ function AppShell() {
         {mobileOpen && (
           <div className={appShellStyles.mobileOverlay}>
               <div className={appShellStyles.mobileBackdrop} onClick={()=> setMobileOpen(false)}/>
-                <div className={appShellStyles}>
-
+                <div className={appShellStyles.mobileSidebar}>
+                  <div>
+                    <Link to='/' className={appShellStyles.mobileLogoLink} onClick={()=>setMobileOpen(false)}>
+                      <img src={logo} alt="logo" className={appShellStyles.mobileLogoImage} />
+                      <span className={appShellStyles.mobileLogoText}>
+                        Invoice Ai
+                      </span>
+                    </Link>
+                    <button className={appShellStyles.mobileCloseButton} onClick={()=>setMobileOpen(false)}>
+                      
+                  <svg
+                    className={appShellStyles.mobileCloseIcon}
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
+                    <path d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                    </button>
+                  </div>
+                  
                 </div>
             </div>
         )}
