@@ -102,6 +102,16 @@ function NavBar() {
           </div>
         </nav>
       </div>
+      <div className={`${open ? "block" : "hidden"} ${navbarStyles.mobileMenu}`}>
+            <div className={navbarStyles.mobileMenuContainer}>
+                    <a href="#features" className={navbarStyles.mobileNavLink}>
+                        Features
+                    </a>
+                     <a href="#pricing" className={navbarStyles.mobileNavLink}>
+                        Pricing
+                    </a>
+            </div>
+      </div>
     </header>
   );
 }
