@@ -1,8 +1,14 @@
 import React from 'react'
+import { appShellStyles } from '../assets/dummyStyles'
+
 
 function AppShell() {
   return (
-    <div>AppShell</div>
+    <div className={appShellStyles.root}>
+        <div>
+            
+        </div>
+    </div>
   )
 }
 
