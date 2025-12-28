@@ -49,7 +49,7 @@ function Pricing() {
             {price}
         </span>
         {period && (
-            <span className=></span>
+            <span className={}></span>
         )}
         </div>
         </div>
