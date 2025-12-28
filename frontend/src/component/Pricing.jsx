@@ -144,7 +144,12 @@ function Pricing() {
     
 
         </div>
-        
+        {isPopular && (
+            <>
+            <div className={pricingCardStyles.cornerAccent1}></div>
+             <div className={pricingCardStyles.cornerAccent2}></div>
+            </>
+        )}
     </div>
   }
   const plans = {
