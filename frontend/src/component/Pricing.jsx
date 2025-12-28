@@ -141,9 +141,10 @@ function Pricing() {
           </button>
         </SignedOut>
       </div>
-    </div>
+    
 
         </div>
+        
     </div>
   }
   const plans = {
