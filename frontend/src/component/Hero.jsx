@@ -230,7 +230,15 @@ function Hero() {
                   <span className={heroStyles.aiIndicatorText}>"Invoice for web design - $150...."</span>
                   </div>
               </div>
+              <div className={heroStyles.cornerAccent1}></div>
+              <div className={heroStyles.cornerAccent2}></div>
+              <div className={heroStyles.cardBackground}></div>
             </div>
+          </div>
+          <div className={heroStyles.scrollIndicator}>
+                  <div className={heroStyles.scrollContainer}>
+                  <span className={heroStyles.scrollText}> Scroll to Explore</span>
+                  </div>
           </div>
         </div>
       </div>
