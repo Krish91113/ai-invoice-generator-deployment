@@ -1,7 +1,14 @@
-import React from 'react'
-import { featuresStyles } from '../assets/dummyStyles'
+import React from "react";
+import { featuresStyles } from "../assets/dummyStyles";
+
+const FeatureCard = ({title,desc,icon,delay = 0})=>(
+    <div className={featuresStyles.featureCard} style={{transitionDelay : `${delay}ms`} }>
+        <div className={featuresStyles.featureCardGradient}></div>
+
+    </div>
+)
 function Features() {
-     const features = [
+  const features = [
     {
       title: "AI Invoice Parsing",
       desc: "Paste freeform text and let our advanced AI extract client details, line items, and totals into a perfectly formatted draft invoice in seconds.",
@@ -67,10 +74,31 @@ function Features() {
     },
   ];
   return (
-   <div>
+    <section id="features" className={featuresStyles.section}>
+      <div className={featuresStyles.backgroundBlob1}> </div>
+      <div className={featuresStyles.backgroundBlob2}> </div>
+      <div className={featuresStyles.backgroundBlob3}> </div>
+      <div className={featuresStyles.container}>
+        <div className={featuresStyles.headerContainer}>
+          <div className={featuresStyles.badge}>
+            <span className={featuresStyles.badgeDot}></span>
+            <span className={featuresStyles.badgeText}>Powerful features</span>
+          </div>
+          <h2 className={featuresStyles.title}>
+            Built for {" "}
+            <span className={featuresStyles.titleGradient}>Speed & Clarity</span>
+            </h2>
 
-   </div>
-  )
+            <p className={featuresStyles.subtitle}>
+                A minimal,intelligent interface that focuses on what truly mattrs - create,send , and track invoices effortlessly while maintaining professional excellence
+            </p>
+        </div>
+        <div className={featuresStyles.featuresGrid}>
+            {features.map((features, index)=>{})}
+        </div>
+      </div>
+    </section>
+  );
 }
 
-export default Features
+export default Features;
