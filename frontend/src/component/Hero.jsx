@@ -238,6 +238,9 @@ function Hero() {
           <div className={heroStyles.scrollIndicator}>
                   <div className={heroStyles.scrollContainer}>
                   <span className={heroStyles.scrollText}> Scroll to Explore</span>
+                  <div className={heroStyles.scrollBar}>
+                    <div className={heroStyles.scrollDot}></div>
+                  </div>
                   </div>
           </div>
         </div>
