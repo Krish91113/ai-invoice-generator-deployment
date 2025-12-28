@@ -301,7 +301,9 @@ function Pricing() {
             </div>
             </div>
             <div className={pricingStyles.grid}>
-
+                    {currentPlans.map((plan, index)=>{
+                        <pricingCard key={plan.title} {...plan} delay={index * 100} />
+                    })}
             </div>
         </div>
     </section>
