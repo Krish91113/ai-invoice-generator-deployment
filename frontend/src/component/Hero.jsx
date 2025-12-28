@@ -91,6 +91,9 @@ function Hero() {
                   </svg>
                 </button>
               </SignedOut>
+              <a href="#features" className={heroStyles.secondaryButton} >
+                <span>Explore Features</span>
+              </a>
             </div>
           </div>
         </div>
