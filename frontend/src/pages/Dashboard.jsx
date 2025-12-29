@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import { dashboardStyles } from '../assets/dummyStyles';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@clerk/clerk-react';
@@ -147,6 +147,23 @@ function formatDate(dateInput) {
 			if(!token){
 				token = await getToken({forceRefresh : true}).catch(()=> null);
 			}
+
+		} catch (error) {
+			return null;
+		}
+	}, {getToken})
+
+	const [storedInvoices, setStoredInvoices] = useState([]);
+	const [loading,setLoading]= useState(true);
+	const [error,setError] = useState(true);
+	const [businessProfile, setBusinessProfile] = useState(null);
+
+	// fetch invoices
+	const fetchInvoices = useCallback(async ()=>{
+		setLoading(true)
+		setError(null)
+
+		try {
 			
 		} catch (error) {
 			
