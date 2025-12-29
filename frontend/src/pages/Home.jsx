@@ -15,6 +15,7 @@ function Home() {
         </div>
         <Pricing/>
       </main>
+      
     </div>
   );
 }
