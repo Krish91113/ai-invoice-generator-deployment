@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { dashboardStyles } from "../assets/dummyStyles";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@clerk/clerk-react";
@@ -214,7 +214,140 @@ const Dashboard = () => {
 		setLoading(false);
 	}
   },{obtainToken});
-  return <div></div>;
+
+
+  // fetch user profile
+
+  const fetchBusinessProfile = useCallback(async ()=>{
+	try {
+		const token = await obtainToken();
+		if(!token){
+			return;
+		}
+		const res = await fetch(`${API_BASE}/api/businessProfile/me`, {
+			method : "GET",
+			headers :{
+				Authorization : `Bearer ${token}`,
+				Accept: "application/json",
+			}
+		})
+	 if (res.status === 401) {
+        // silently ignore; profile not available
+        return;
+      }
+      if (!res.ok) return;
+      const json = await res.json().catch(() => null);
+      const data = json?.data || null;
+      if (data) setBusinessProfile(data);
+    } catch (err) {
+      // non-fatal
+      console.warn("Failed to fetch business profile:", err);
+    }
+  }, [obtainToken]);
+
+  useEffect(()=>{
+	fetchInvoices();
+	fetchBusinessProfile();
+	function onStorage (e) {
+		if(e.key === "invoice_v1") fetchInvoices();
+		window.addEventListener("storage", onStorage);
+		return ()=> window.removeEventListener("storage",onStorage);
+	}
+  }, [fetchInvoices,fetchBusinessProfile,isSignedIn])
+  const HARD_RATES = {
+    USD_TO_INR: 83, 
+  };
+
+  function convertToINR(amount = 0, currency = "INR") {
+    const n = Number(amount || 0);
+    const curr = String(currency || "INR")
+      .trim()
+      .toUpperCase();
+
+    if (curr === "INR") return n;
+    if (curr === "USD") return n * HARD_RATES.USD_TO_INR;
+    return n;
+  }
+
+  const kpis = useMemo(() => {
+    const totalInvoices = storedInvoices.length;
+    let totalPaid = 0; // in INR
+    let totalUnpaid = 0; // in INR
+    let paidCount = 0;
+    let unpaidCount = 0;
+
+    storedInvoices.forEach((inv) => {
+      const rawAmount =
+        typeof inv.amount === "number"
+          ? inv.amount
+          : Number(inv.total ?? inv.amount ?? 0);
+      const invCurrency = inv.currency || "INR";
+      const amtInINR = convertToINR(rawAmount, invCurrency);
+
+      if (inv.status === "Paid") {
+        totalPaid += amtInINR;
+        paidCount++;
+      }
+      if (inv.status === "Unpaid" || inv.status === "Overdue") {
+        totalUnpaid += amtInINR;
+        unpaidCount++;
+      }
+    });
+
+    const totalAmount = totalPaid + totalUnpaid;
+    const paidPercentage =
+      totalAmount > 0 ? (totalPaid / totalAmount) * 100 : 0;
+    const unpaidPercentage =
+      totalAmount > 0 ? (totalUnpaid / totalAmount) * 100 : 0;
+
+    return {
+      totalInvoices,
+      totalPaid,
+      totalUnpaid,
+      paidCount,
+      unpaidCount,
+      paidPercentage,
+      unpaidPercentage,
+    };
+  }, [storedInvoices]);
+
+
+  const recent = useMemo(() => {
+    return storedInvoices
+      .slice()
+      .sort(
+        (a, b) =>
+          (Date.parse(b.issueDate || 0) || 0) -
+          (Date.parse(a.issueDate || 0) || 0)
+      )
+      .slice(0, 5);
+  }, [storedInvoices]);
+
+
+  const getClientName = (inv) => {
+    if (!inv) return "";
+    if (typeof inv.client === "string") return inv.client;
+    if (typeof inv.client === "object")
+      return inv.client?.name || inv.client?.company || inv.company || "";
+    return inv.company || "Client";
+  };
+
+  const getClientInitial = (inv) => {
+    const clientName = getClientName(inv);
+    return clientName ? clientName.charAt(0).toUpperCase() : "C";
+  };
+
+  function openInvoice(invRow) {
+    const payload = invRow;
+    navigate(`/app/invoices/${invRow.id}`, { state: { invoice: payload } });
+  }
+
+ 
+  return(
+	<div>
+		
+	</div>
+  )
 };
 
 export default Dashboard;
