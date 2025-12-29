@@ -3,6 +3,7 @@ import NavBar from "../component/NavBar";
 import Hero from "../component/Hero";
 import Features from "../component/Features";
 import Pricing from "../component/Pricing";
+import Footer from "../component/Footer";
 
 function Home() {
   return (
@@ -15,7 +16,7 @@ function Home() {
         </div>
         <Pricing/>
       </main>
-      
+      <Footer/>
     </div>
   );
 }
