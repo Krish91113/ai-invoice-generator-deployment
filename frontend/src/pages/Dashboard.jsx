@@ -345,9 +345,14 @@ const Dashboard = () => {
  
   return(
 	<div className={dashboardStyles.pageContainer}>
-    <div className="">
-
+    <div className={dashboardStyles.headerContainer}>
+    <h1 className={dashboardStyles.headerTitle}>Dashboard Overview</h1>
+    <p className={dashboardStyles.headerSubtitle}>
+      Track your invoicing performance and business insights
+    </p>
     </div>
+    {/**loadig and error statement */}
+    
 	</div>
   )
 };
