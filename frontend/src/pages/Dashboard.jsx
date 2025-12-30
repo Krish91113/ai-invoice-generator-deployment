@@ -398,6 +398,21 @@ const Dashboard = () => {
           trend={-3.1}
         />
       </div>
+      <div className={dashboardStyles.mainGrid}>
+      <div className={dashboardStyles.sidebarColumn}>
+      <div className={dashboardStyles.quickStatsCard}>
+      <h3 className={dashboardStyles.quickStatsTitle}>{}title</h3>
+      <div className="space-y-3">
+        <div className={dashboardStyles.quickStatsRow}>
+      <span className={dashboardStyles.quickStatsLabel}>Paid Rate</span>
+      <span className={dashboardStyles.quickStatsValue}>
+      {kpis.totalInvoices > 0 ? ((kpis.paidCount / kpis.totalInvoices) * 100).toFixed(1) : 0} %
+      </span>
+        </div>
+      </div>
+      </div>
+      </div>
+      </div>
     </div>
   );
 };
