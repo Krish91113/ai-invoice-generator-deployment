@@ -91,10 +91,10 @@ function AppShell() {
   const logout = async () => {
     try {
       await signOut();
-      navigate("/login");
+      navigate("/");
     } catch (error) {
       console.warn("Signout error", error);
-      navigate("/login");
+      navigate("/");
     }
   };
 
@@ -189,9 +189,8 @@ function AppShell() {
 
   const CollapseIcon = ({ className = "w-4 h-4", collapsed: isCollapsed }) => (
     <svg
-      className={`${className} transition-transform duration-300 ${
-        isCollapsed ? "rotate-180" : ""
-      }`}
+      className={`${className} transition-transform duration-300 ${isCollapsed ? "rotate-180" : ""
+        }`}
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
@@ -236,22 +235,21 @@ function AppShell() {
       className={({ isActive }) => `
         ${appShellStyles.sidebarLink}
         ${collapsed ? appShellStyles.sidebarLinkCollapsed : ""}
-        ${
-          isActive
-            ? appShellStyles.sidebarLinkActive
-            : appShellStyles.sidebarLinkInactive
+        ${isActive
+          ? appShellStyles.sidebarLinkActive
+          : appShellStyles.sidebarLinkInactive
         }
+        cursor-pointer
       `}
       onClick={handleMobileClose}
     >
       {({ isActive }) => (
         <>
           <div
-            className={`${appShellStyles.sidebarIcon} ${
-              isActive
-                ? appShellStyles.sidebarIconActive
-                : appShellStyles.sidebarIconInactive
-            }`}
+            className={`${appShellStyles.sidebarIcon} ${isActive
+              ? appShellStyles.sidebarIconActive
+              : appShellStyles.sidebarIconInactive
+              }`}
           >
             {icon}
           </div>
@@ -271,19 +269,17 @@ function AppShell() {
       <div className={appShellStyles.layout}>
         {/* sidebar */}
         <aside
-          className={`${appShellStyles.sidebar} ${
-            collapsed
-              ? appShellStyles.sidebarCollapsed
-              : appShellStyles.sidebarExpanded
-          }`}
+          className={`${appShellStyles.sidebar} ${collapsed
+            ? appShellStyles.sidebarCollapsed
+            : appShellStyles.sidebarExpanded
+            }`}
         >
-          <div className={appShellStyles.sidebarGradient}>
-            <div className={appShellStyles.sidebarContainer}>
+          <div className={appShellStyles.sidebarGradient} style={{ position: 'relative', zIndex: 40 }}>
+            <div className={appShellStyles.sidebarContainer} style={{ position: 'relative', zIndex: 40 }}>
               <div>
                 <div
-                  className={`${appShellStyles.logoContainer} ${
-                    collapsed ? appShellStyles.logoContainerCollapsed : ""
-                  }`}
+                  className={`${appShellStyles.logoContainer} ${collapsed ? appShellStyles.logoContainerCollapsed : ""
+                    }`}
                 >
                   <Link to="/" className={appShellStyles.logoLink}>
                     <div className="relative">
@@ -324,11 +320,10 @@ function AppShell() {
 
               <div className={appShellStyles.userSection}>
                 <div
-                  className={`${appShellStyles.userDivider} ${
-                    collapsed
-                      ? appShellStyles.userDividerCollapsed
-                      : appShellStyles.userDividerExpanded
-                  }`}
+                  className={`${appShellStyles.userDivider} ${collapsed
+                    ? appShellStyles.userDividerCollapsed
+                    : appShellStyles.userDividerExpanded
+                    }`}
                 >
                   {!collapsed ? (
                     <button
@@ -373,7 +368,7 @@ function AppShell() {
 
         {/* mobile view */}
         {mobileOpen && (
-          <div 
+          <div
             className={appShellStyles.mobileOverlay}
             style={{ zIndex: 50 }}
           >
@@ -389,7 +384,7 @@ function AppShell() {
                 }
               }}
             />
-            <div 
+            <div
               className={appShellStyles.mobileSidebar}
               style={{ position: "relative", zIndex: 51 }}
             >
@@ -425,10 +420,9 @@ function AppShell() {
                   onClick={handleMobileClose}
                   to="/app/dashboard"
                   className={({ isActive }) =>
-                    `${appShellStyles.mobileNavLink} ${
-                      isActive
-                        ? appShellStyles.mobileNavLinkActive
-                        : appShellStyles.mobileNavLinkInactive
+                    `${appShellStyles.mobileNavLink} ${isActive
+                      ? appShellStyles.mobileNavLinkActive
+                      : appShellStyles.mobileNavLinkInactive
                     }`
                   }
                 >
@@ -438,10 +432,9 @@ function AppShell() {
                   onClick={handleMobileClose}
                   to="/app/invoices"
                   className={({ isActive }) =>
-                    `${appShellStyles.mobileNavLink} ${
-                      isActive
-                        ? appShellStyles.mobileNavLinkActive
-                        : appShellStyles.mobileNavLinkInactive
+                    `${appShellStyles.mobileNavLink} ${isActive
+                      ? appShellStyles.mobileNavLinkActive
+                      : appShellStyles.mobileNavLinkInactive
                     }`
                   }
                 >
@@ -451,10 +444,9 @@ function AppShell() {
                   onClick={handleMobileClose}
                   to="/app/create-invoice"
                   className={({ isActive }) =>
-                    `${appShellStyles.mobileNavLink} ${
-                      isActive
-                        ? appShellStyles.mobileNavLinkActive
-                        : appShellStyles.mobileNavLinkInactive
+                    `${appShellStyles.mobileNavLink} ${isActive
+                      ? appShellStyles.mobileNavLinkActive
+                      : appShellStyles.mobileNavLinkInactive
                     }`
                   }
                 >
@@ -464,10 +456,9 @@ function AppShell() {
                   onClick={handleMobileClose}
                   to="/app/business"
                   className={({ isActive }) =>
-                    `${appShellStyles.mobileNavLink} ${
-                      isActive
-                        ? appShellStyles.mobileNavLinkActive
-                        : appShellStyles.mobileNavLinkInactive
+                    `${appShellStyles.mobileNavLink} ${isActive
+                      ? appShellStyles.mobileNavLinkActive
+                      : appShellStyles.mobileNavLinkInactive
                     }`
                   }
                 >
@@ -492,14 +483,13 @@ function AppShell() {
 
         {/* MAIN CONTENT NAVBAR */}
         <div className="flex-1 min-w-0" style={
-         { position : "relative", zIndex:20}
+          { position: "relative", zIndex: 20 }
         }>
           <header
-            className={`${appShellStyles.header} ${
-              scrolled
-                ? appShellStyles.headerScrolled
-                : appShellStyles.headerNotScrolled
-            }`}
+            className={`${appShellStyles.header} ${scrolled
+              ? appShellStyles.headerScrolled
+              : appShellStyles.headerNotScrolled
+              }`}
             style={{ position: "relative", zIndex: 40 }}
           >
             <div className={appShellStyles.headerTopSection}>

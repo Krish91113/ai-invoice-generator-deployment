@@ -9,16 +9,16 @@ function AiInvoiceModal({ open, onClose, onGenerate, initialText = "" }) {
 
   useEffect(
     () => {
-      setText(initialText | "");
+      setText(initialText || "");
       setError("");
       setLoading(false);
     },
-    { open, initialText }
+    [open, initialText]
   );
   if (!open) return null;
   async function handleGenerateLink() {
     setError("");
-    const raw = (text || "").trim();
+    const raw = String(text || "").trim();
     if (!raw) {
       setError("Please Paste invoice text to generate it from AI");
       return;
@@ -66,33 +66,58 @@ function AiInvoiceModal({ open, onClose, onGenerate, initialText = "" }) {
           </button>
         </div>
         <div className="mt-4">
-              <label className={aiInvoiceModalStyles.label}>
-                Paste Invoice text
-              </label>
-              <textarea name="" value={text} onChange={(e)=>setText(e.target.value)} 
-              placeholder={`eg. A person wants a logo design for her organic brang "GreenVibe." Quoted for $120 for 2 logo options and final delivery in PNG and vector fromat `}
-              id="" rows={8} className={aiInvoiceModalStyles.textarea}>
+          <label className={aiInvoiceModalStyles.label}>
+            Paste Invoice text
+          </label>
+          <textarea name="" value={text} onChange={(e) => setText(e.target.value)}
+            placeholder={`eg. A person wants a logo design for her organic brang "GreenVibe." Quoted for $120 for 2 logo options and final delivery in PNG and vector fromat `}
+            id="" rows={8} className={aiInvoiceModalStyles.textarea}>
 
-              </textarea>
+          </textarea>
         </div>
         {error && (
-<div className={aiInvoiceModalStyles.error} role="alert">
-              {String(error)
-                .split("\n")
-                .map((line, i) => (
-                  <div key={i}>{line}</div>
-                ))}
-              {(/quota|exhausted|resource_exhausted/i.test(String(error)) && (
-                <div style={{ marginTop: 8, fontSize: 13, color: "#374151" }}>
-                  Tip: AI is temporarily unavailable (quota). Try again in a few
-                  minutes, or create the invoice manually.
-                </div>
-              )) ||
-                null}
-            </div>
+          <div className={aiInvoiceModalStyles.error} role="alert">
+            {String(error)
+              .split("\n")
+              .map((line, i) => (
+                <div key={i}>{line}</div>
+              ))}
+            {(/quota|exhausted|resource_exhausted/i.test(String(error)) && (
+              <div style={{ marginTop: 8, fontSize: 13, color: "#374151" }}>
+                Tip: AI is temporarily unavailable (quota). Try again in a few
+                minutes, or create the invoice manually.
+              </div>
+            )) ||
+              null}
+          </div>
         )}
         <div className={aiInvoiceModalStyles.actions}>
-       
+          <button
+            type="button"
+            onClick={() => onClose && onClose()}
+            className={aiInvoiceModalStyles.cancelButton}
+            disabled={loading}
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            onClick={handleGenerateLink}
+            className={aiInvoiceModalStyles.generateButton}
+            disabled={loading || !text.trim()}
+          >
+            {loading ? (
+              <>
+                <span className={aiInvoiceModalStyles.spinner}></span>
+                Generating...
+              </>
+            ) : (
+              <>
+                <GeminiIcon className="w-5 h-5" />
+                Generate Invoice
+              </>
+            )}
+          </button>
         </div>
       </div>
     </div>

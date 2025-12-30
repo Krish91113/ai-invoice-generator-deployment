@@ -28,7 +28,7 @@ function buildInvoicePrompt(promptText) {
     fromAddress: "",
     fromPhone: "",
     client: { name: "", email: "", address: "", phone: "" },
-    items: [{ id: "1", description: "", qty: 1, unitPrice: 0 }],
+    items: [{ id: "1", description: "", qty: 1, unitprice: 0 }],
     taxPercent: 18,
     notes: "",
   };

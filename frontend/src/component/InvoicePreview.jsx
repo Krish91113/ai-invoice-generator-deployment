@@ -409,7 +409,7 @@ export default function InvoicePreview() {
     invoice.items && Array.isArray(invoice.items) ? invoice.items : []
   ).filter(Boolean);
   const subtotal = items.reduce(
-    (s, it) => s + Number(it.qty || 0) * Number(it.unitPrice || 0),
+    (s, it) => s + Number(it.qty || 0) * Number(it.unitprice || it.unitPrice || 0),
     0
   );
   const taxPercent = Number(
@@ -550,12 +550,12 @@ export default function InvoicePreview() {
                   </span>
                   <span
                     className={`${invoicePreviewStyles.invoiceDetailValue} ${invoice.status === "paid"
-                        ? invoicePreviewStyles.statusPaid
-                        : invoice.status === "unpaid"
-                          ? invoicePreviewStyles.statusUnpaid
-                          : invoice.status === "overdue"
-                            ? invoicePreviewStyles.statusOverdue
-                            : invoicePreviewStyles.statusDraft
+                      ? invoicePreviewStyles.statusPaid
+                      : invoice.status === "unpaid"
+                        ? invoicePreviewStyles.statusUnpaid
+                        : invoice.status === "overdue"
+                          ? invoicePreviewStyles.statusOverdue
+                          : invoicePreviewStyles.statusDraft
                       }`}
                   >
                     {invoice.status
@@ -660,11 +660,11 @@ export default function InvoicePreview() {
                         </td>
                         <td style={{ textAlign: "right" }}>{it.qty || 0}</td>
                         <td style={{ textAlign: "right" }}>
-                          {currencyFmt(it.unitPrice, invoiceCurrency)}
+                          {currencyFmt(it.unitprice || it.unitPrice || 0, invoiceCurrency)}
                         </td>
                         <td style={{ textAlign: "right", fontWeight: "600" }}>
                           {currencyFmt(
-                            Number(it.qty || 0) * Number(it.unitPrice || 0),
+                            Number(it.qty || 0) * Number(it.unitprice || it.unitPrice || 0),
                             invoiceCurrency
                           )}
                         </td>

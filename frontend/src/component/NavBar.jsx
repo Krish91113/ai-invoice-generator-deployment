@@ -25,7 +25,7 @@ function NavBar() {
         if (token) {
           try {
             localStorage.setItem(TOKEN_KEY, token);
-            console.log(token);
+            // console.log(token);
           } catch (e) {
             console.error(error);
           }
@@ -107,11 +107,11 @@ function NavBar() {
       if (clerk && typeof clerk.openSignIn === "function") {
         clerk.openSignIn();
       } else {
-        navigate("/login");
+        navigate("/");
       }
     } catch (error) {
       console.error("openSignIN failed", error);
-      navigate("/login");
+      navigate("/");
     }
   }
   function openSignUp() {
@@ -180,20 +180,20 @@ function NavBar() {
               <div className={navbarStyles.mobileMenuIcon}>
                 <span
                   className={`${navbarStyles.mobileMenuLine1} ${open
-                      ? navbarStyles.mobileMenuLine1Open
-                      : navbarStyles.mobileMenuLine1Closed
+                    ? navbarStyles.mobileMenuLine1Open
+                    : navbarStyles.mobileMenuLine1Closed
                     }`}
                 ></span>
                 <span
                   className={`${navbarStyles.mobileMenuLine2} ${open
-                      ? navbarStyles.mobileMenuLine2Open
-                      : navbarStyles.mobileMenuLine2Closed
+                    ? navbarStyles.mobileMenuLine2Open
+                    : navbarStyles.mobileMenuLine2Closed
                     }`}
                 ></span>
                 <span
                   className={`${navbarStyles.mobileMenuLine3} ${open
-                      ? navbarStyles.mobileMenuLine3Open
-                      : navbarStyles.mobileMenuLine3Closed
+                    ? navbarStyles.mobileMenuLine3Open
+                    : navbarStyles.mobileMenuLine3Closed
                     }`}
                 ></span>
               </div>

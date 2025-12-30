@@ -370,7 +370,7 @@ const Dashboard = () => {
             {String(error).toLowerCase().includes("unauthorized") && (
               <button
                 className="px-3 py-1 bg-gray-800 text-white rounded"
-                onClick={() => navigate("/login")}
+                onClick={() => navigate("/")}
               >
                 Sign In
               </button>

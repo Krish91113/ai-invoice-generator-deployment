@@ -38,7 +38,8 @@ const invoiceSchema = new mongoose.Schema({
     },
     dueDate: {
         type: String,
-        required: true
+        required: false,
+        default: ""
     },
 
     //Business info

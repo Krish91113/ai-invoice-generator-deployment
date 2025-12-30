@@ -209,8 +209,8 @@ function Pagination({ page, totalPages, onChange }) {
               type="button"
               onClick={() => onChange(p)}
               className={`${invoicesStyles.paginationNumber} ${p === page
-                  ? invoicesStyles.paginationNumberActive
-                  : invoicesStyles.paginationNumberInactive
+                ? invoicesStyles.paginationNumberActive
+                : invoicesStyles.paginationNumberInactive
                 }`}
             >
               {p}
@@ -417,7 +417,7 @@ export default function InvoicesPage() {
       const token = await obtainToken();
       if (!token) {
         alert("Delete requires authentication. Please sign in.");
-        navigate("/login");
+        navigate("/");
         return;
       }
       const res = await fetch(
@@ -429,7 +429,7 @@ export default function InvoicesPage() {
       );
       if (res.status === 401) {
         alert("Unauthorized. Please sign in.");
-        navigate("/login");
+        navigate("/");
         return;
       }
       if (!res.ok) {
@@ -659,7 +659,7 @@ export default function InvoicesPage() {
               {String(error).toLowerCase().includes("unauthorized") && (
                 <button
                   type="button"
-                  onClick={() => navigate("/login")}
+                  onClick={() => navigate("/")}
                   style={{
                     padding: "6px 10px",
                     background: "#111827",
