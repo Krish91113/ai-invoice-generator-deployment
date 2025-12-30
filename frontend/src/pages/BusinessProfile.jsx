@@ -98,7 +98,7 @@ function resolveImageUrl(url) {
   return `${API_BASE.replace(/\/+$/, "")}/${s.replace(/^\/+/, "")}`;
 }
 function BusinessProfile() {
-    const { getToken, isSignedIn } = useAuth();
+  const { getToken, isSignedIn } = useAuth();
   const { user } = useUser();
 
   const [meta, setMeta] = useState({});
@@ -203,9 +203,9 @@ function BusinessProfile() {
   function updateMeta(field, value) {
     setMeta((m) => ({ ...m, [field]: value }));
   }
-// file handling for logo and stamp 
+  // file handling for logo and stamp
 
-function handleLocalFilePick(kind, file) {
+  function handleLocalFilePick(kind, file) {
     if (!file) return;
     // revoke previous object URL if we created it
     const prev = previews[kind];
@@ -226,8 +226,8 @@ function handleLocalFilePick(kind, file) {
     );
   }
 
-  // we can remvoe file locally if we dont want 
-   function removeLocalFile(kind) {
+  // we can remvoe file locally if we dont want
+  function removeLocalFile(kind) {
     const prev = previews[kind];
     if (prev && typeof prev === "string" && prev.startsWith("blob:")) {
       URL.revokeObjectURL(prev);
@@ -244,7 +244,6 @@ function handleLocalFilePick(kind, file) {
     );
   }
   // to save the info into db
-
 
   async function handleSave(e) {
     e?.preventDefault();
@@ -355,9 +354,53 @@ function handleLocalFilePick(kind, file) {
   }
   return (
     <div className={businessProfileStyles.pageContainer}>
-        
+      <div className={businessProfileStyles.headerContainer}>
+        <h1 className={businessProfileStyles.headerTitle}>Business Profile</h1>
+        <p className={businessProfileStyles.headerSubtitle}>
+          Configure your company details, branding assets and invoice defaults
+        </p>
+        {!isSignedIn && (
+          <div
+            style={{
+              marginTop: 12,
+              color: "#92400e",
+              background: "#fff7ed",
+              padding: 10,
+              borderRadius: 9,
+            }}
+          >
+            You are not signed in - changes cannot be saved . Please sign in to
+            load and save your business profile
+          </div>
+        )}
+        <form
+          onSubmit={handleSave}
+          className={businessProfileStyles.pageContainer}
+        >
+          <div className={businessProfileStyles.cardContainer}>
+            <div className={businessProfileStyles.cardHeaderContainer}>
+              <div
+                className={`${businessProfileStyles.cardIconContainer} ${iconColors.business}`}
+              >
+                <svg
+                  className="w-5 h-5"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
+                  <path d="M19 21V5a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 8v-4m0 4h4" />
+                </svg>
+              </div>
+              <h2 className={businessProfileStyles.cardTitle}>
+        Business Information
+              </h2>
+            </div>
+          </div>
+        </form>
+      </div>
     </div>
-  )
+  );
 }
 
 export default BusinessProfile;
