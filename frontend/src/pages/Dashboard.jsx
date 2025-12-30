@@ -352,7 +352,27 @@ const Dashboard = () => {
     </p>
     </div>
     {/**loadig and error statement */}
-    
+    {loading ? (
+      <div className="p-6">Loading Invoices.....</div>
+    ): error? (
+      <div className="p-6">
+        <div className="text-red-600">Error : {error}</div>
+        <div className="flex gap-2">
+      <button onClick={fetchInvoices} className="px-3 py-2 bg-blue-600 text-white rouded">
+Retry
+      </button>
+      {String(error).toLowerCase().includes("unauthorized") && (
+        <button className="px-3 py-1 bg-gray-800 text-white rounded" onClick={()=> navigate("/login")}>
+          Sign In
+        </button>
+      )}
+        </div>
+      </div>
+    ): null}
+
+    <div className={dashboardStyles.kpiGrid}>
+
+    </div>
 	</div>
   )
 };
