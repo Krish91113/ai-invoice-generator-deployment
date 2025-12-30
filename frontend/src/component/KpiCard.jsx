@@ -69,7 +69,14 @@ const MetricIcons = {
   ),
 };
 
-function KpiCard() {
+function KpiCard({
+     title,
+  value,
+  hint,
+  iconType = "default",
+  trend,
+  className = "",
+}) {
   return (
     <div>KpiCard</div>
   )
