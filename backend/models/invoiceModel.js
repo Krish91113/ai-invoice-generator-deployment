@@ -1,46 +1,46 @@
 import mongoose from "mongoose";
 
 const itemSchema = new mongoose.Schema({
-    id:{
+    id: {
         type: String,
         required: true
     },
-    description:{
+    description: {
         type: String,
         required: true
     },
-    qty:{
+    qty: {
         type: Number,
         required: true,
         default: 1
     },
-    unitprice:{
+    unitprice: {
         type: Number,
         required: true,
         default: 0
     },
-},{ _id: false });
+}, { _id: false });
 
 const invoiceSchema = new mongoose.Schema({
-    owner :{
+    owner: {
         type: String,
         required: true,
         index: true
     },
-    invoiceNumber:{
+    invoiceNumber: {
         type: String,
         required: true,
         index: true
     },
-    issueDate:{
+    issueDate: {
         type: String,
         required: true
     },
-    dueDate:{
+    dueDate: {
         type: String,
         required: true
     },
-    
+
     //Business info
     fromBusinessName: { type: String, default: "" },
     fromEmail: { type: String, default: "" },
@@ -50,18 +50,19 @@ const invoiceSchema = new mongoose.Schema({
 
     // Client info
     client: {
-      name: { type: String, default: "" },
-      email: { type: String, default: "" },
-      address: { type: String, default: "" },
-      phone: { type: String, default: "" },
+        name: { type: String, default: "" },
+        email: { type: String, default: "" },
+        address: { type: String, default: "" },
+        phone: { type: String, default: "" },
     },
 
-    items : {type : [itemSchema], default : []},
+    items: { type: [itemSchema], default: [] },
     currency: { type: String, default: "INR" },
     status: { type: String, enum: ["draft", "unpaid", "paid", "overdue"], default: "draft" },
 
 
-    //for assets handling logoDataUrl: { type: String, default: null },
+    //for assets handling
+    logoDataUrl: { type: String, default: null },
     stampDataUrl: { type: String, default: null },
     signatureDataUrl: { type: String, default: null },
 
@@ -73,6 +74,7 @@ const invoiceSchema = new mongoose.Schema({
     subtotal: { type: Number, default: 0 },
     tax: { type: Number, default: 0 },
     total: { type: Number, default: 0 },
+    notes: { type: String, default: "" },
 }, { timestamps: true });
 
 const Invoice = mongoose.model("Invoice", invoiceSchema);

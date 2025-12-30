@@ -71,7 +71,7 @@ export async function createBusinessProfile(req, res) {
 }
 
 //to updated business profile
-export async function updateBusinessProfile(params) {
+export async function updateBusinessProfile(req, res) {
   try {
     const { userId } = getAuth(req);
     if (!userId) {
@@ -122,14 +122,14 @@ export async function updateBusinessProfile(params) {
     if (body.defaultTaxPercent !== undefined)
       update.defaultTaxPercent = Number(body.defaultTaxPercent);
 
-    const updated = await BusinessProfile.findByIdAndUpdate(id,update, {
-        new : true,
-        runValidators : true
+    const updated = await BusinessProfile.findByIdAndUpdate(id, update, {
+      new: true,
+      runValidators: true
     })
     return res.status(200).json({
-        success: true,
-        data : updated,
-        message :"Business Profile Updated successfully !"
+      success: true,
+      data: updated,
+      message: "Business Profile Updated successfully !"
     })
   } catch (error) {
     console.log("update businessprofile error", error);
@@ -142,25 +142,25 @@ export async function updateBusinessProfile(params) {
 
 // to get my businessProfile
 
-export async function getMyBusinessProfile (req,res){
-    try {
-        const { userId } = getAuth(req);
+export async function getMyBusinessProfile(req, res) {
+  try {
+    const { userId } = getAuth(req);
     if (!userId) {
       return res
         .status(401)
         .json({ success: false, message: "Authentication Reqquired" });
     }
 
-    const profile= await BusinessProfile.findOne({owner : userId}).lean();
-    if(!profile){
-        return res.status(404).json({
-            success : true,
-            message : "NO Profile Found"
-        })
+    const profile = await BusinessProfile.findOne({ owner: userId }).lean();
+    if (!profile) {
+      return res.status(404).json({
+        success: false,
+        message: "No Profile Found"
+      })
     }
-    return res.status(200).json({success:true, data:profile})
+    return res.status(200).json({ success: true, data: profile })
 
-    } catch (error) {
+  } catch (error) {
     console.log("GetMy businessprofile error", error);
     return res.status(500).json({
       success: false,

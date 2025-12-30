@@ -143,20 +143,21 @@ const Dashboard = () => {
     async () => {
       if (typeof getToken !== "function") return null;
       try {
-        let token = await getToken({ template: "default" }).catch(() => null);
+        let token = await getToken().catch(() => null);
         if (!token) {
           token = await getToken({ forceRefresh: true }).catch(() => null);
         }
+        return token;
       } catch (error) {
         return null;
       }
     },
-    { getToken }
+    [getToken]
   );
 
   const [storedInvoices, setStoredInvoices] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(true);
+  const [error, setError] = useState(null);
   const [businessProfile, setBusinessProfile] = useState(null);
 
   // fetch invoices
@@ -167,7 +168,7 @@ const Dashboard = () => {
 
       try {
         const token = await obtainToken();
-        const headers = { Accept: "applicatio/json" };
+        const headers = { Accept: "application/json" };
         if (token) headers["Authorization"] = `Bearer ${token}`;
         const res = await fetch(`${API_BASE}/api/invoice`, {
           method: "GET",
@@ -216,7 +217,7 @@ const Dashboard = () => {
         setLoading(false);
       }
     },
-    { obtainToken }
+    [obtainToken]
   );
 
   // fetch user profile
@@ -249,13 +250,15 @@ const Dashboard = () => {
   }, [obtainToken]);
 
   useEffect(() => {
+    if (!isSignedIn) return;
     fetchInvoices();
     fetchBusinessProfile();
+
     function onStorage(e) {
       if (e.key === "invoice_v1") fetchInvoices();
-      window.addEventListener("storage", onStorage);
-      return () => window.removeEventListener("storage", onStorage);
     }
+    window.addEventListener("storage", onStorage);
+    return () => window.removeEventListener("storage", onStorage);
   }, [fetchInvoices, fetchBusinessProfile, isSignedIn]);
   const HARD_RATES = {
     USD_TO_INR: 83,
@@ -402,7 +405,7 @@ const Dashboard = () => {
       <div className={dashboardStyles.mainGrid}>
         <div className={dashboardStyles.sidebarColumn}>
           <div className={dashboardStyles.quickStatsCard}>
-            <h3 className={dashboardStyles.quickStatsTitle}>{}title</h3>
+            <h3 className={dashboardStyles.quickStatsTitle}>Quick Stats</h3>
             <div className="space-y-3">
               <div className={dashboardStyles.quickStatsRow}>
                 <span className={dashboardStyles.quickStatsLabel}>

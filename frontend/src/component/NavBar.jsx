@@ -37,7 +37,7 @@ function NavBar() {
         return null;
       }
     },
-    [ getToken ]
+    [getToken]
   );
 
   //keetp the localstorage token in sync with clear with state
@@ -47,7 +47,7 @@ function NavBar() {
     // The async function is defined and called immediately inside the effect
     (async () => {
       if (isSignedIn) {
-        const t = await fetchAndStoreToken({ template: "default" }).catch(
+        const t = await fetchAndStoreToken().catch(
           () => null
         );
         if (!t && mounted) {
@@ -70,18 +70,18 @@ function NavBar() {
 
   //if login then navigate to dashboard
   useEffect(() => {
-  if (isSignedIn) {
-    const pathname = window.location.pathname || "/";
-    if (
-      pathname === "/login" ||
-      pathname === "/signup" ||
-      pathname === "/" ||
-      pathname.startsWith("/auth")
-    ) {
-      navigate("/app/dashboard", { replace: true });
+    if (isSignedIn) {
+      const pathname = window.location.pathname || "/";
+      if (
+        pathname === "/login" ||
+        pathname === "/signup" ||
+        pathname === "/" ||
+        pathname.startsWith("/auth")
+      ) {
+        navigate("/app/dashboard", { replace: true });
+      }
     }
-  }
-}, [isSignedIn, navigate]); // Added dependency array
+  }, [isSignedIn, navigate]); // Added dependency array
 
   // Close profile popover on outside click
   useEffect(() => {
@@ -179,25 +179,22 @@ function NavBar() {
             >
               <div className={navbarStyles.mobileMenuIcon}>
                 <span
-                  className={`${navbarStyles.mobileMenuLine1} ${
-                    open
+                  className={`${navbarStyles.mobileMenuLine1} ${open
                       ? navbarStyles.mobileMenuLine1Open
                       : navbarStyles.mobileMenuLine1Closed
-                  }`}
+                    }`}
                 ></span>
                 <span
-                  className={`${navbarStyles.mobileMenuLine2} ${
-                    open
+                  className={`${navbarStyles.mobileMenuLine2} ${open
                       ? navbarStyles.mobileMenuLine2Open
                       : navbarStyles.mobileMenuLine2Closed
-                  }`}
+                    }`}
                 ></span>
                 <span
-                  className={`${navbarStyles.mobileMenuLine3} ${
-                    open
+                  className={`${navbarStyles.mobileMenuLine3} ${open
                       ? navbarStyles.mobileMenuLine3Open
                       : navbarStyles.mobileMenuLine3Closed
-                  }`}
+                    }`}
                 ></span>
               </div>
             </button>

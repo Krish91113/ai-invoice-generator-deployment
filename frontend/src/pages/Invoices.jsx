@@ -208,11 +208,10 @@ function Pagination({ page, totalPages, onChange }) {
               key={p}
               type="button"
               onClick={() => onChange(p)}
-              className={`${invoicesStyles.paginationNumber} ${
-                p === page
+              className={`${invoicesStyles.paginationNumber} ${p === page
                   ? invoicesStyles.paginationNumberActive
                   : invoicesStyles.paginationNumberInactive
-              }`}
+                }`}
             >
               {p}
             </button>
@@ -236,7 +235,7 @@ function uid() {
   try {
     if (typeof crypto !== "undefined" && crypto.randomUUID)
       return crypto.randomUUID();
-  } catch {}
+  } catch { }
   return Math.random().toString(36).slice(2, 9);
 }
 
@@ -249,7 +248,7 @@ export default function InvoicesPage() {
   const obtainToken = useCallback(async () => {
     if (typeof getToken !== "function") return null;
     try {
-      let token = await getToken({ template: "default" }).catch(() => null);
+      let token = await getToken().catch(() => null);
       if (!token) {
         token = await getToken({ forceRefresh: true }).catch(() => null);
       }
@@ -525,7 +524,7 @@ export default function InvoicesPage() {
             let errJson = null;
             try {
               errJson = errText ? JSON.parse(errText) : null;
-            } catch {}
+            } catch { }
             const errMsg =
               (errJson && (errJson.message || errJson.detail)) ||
               errText ||

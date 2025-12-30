@@ -63,7 +63,7 @@ function readJSON(key, fallback = null) {
 function writeJSON(key, val) {
   try {
     localStorage.setItem(key, JSON.stringify(val));
-  } catch {}
+  } catch { }
 }
 function getStoredInvoices() {
   return readJSON("invoices_v1", []) || [];
@@ -195,7 +195,7 @@ export default function InvoicePreview() {
   const obtainToken = useCallback(async () => {
     if (typeof getToken !== "function") return null;
     try {
-      let token = await getToken({ template: "default" }).catch(() => null);
+      let token = await getToken().catch(() => null);
       if (!token)
         token = await getToken({ forceRefresh: true }).catch(() => null);
       return token;
@@ -230,8 +230,8 @@ export default function InvoicePreview() {
               items: Array.isArray(data.items)
                 ? data.items
                 : data.items
-                ? [...data.items]
-                : [],
+                  ? [...data.items]
+                  : [],
               invoiceNumber: data.invoiceNumber ?? data.invoiceNumber ?? "",
               currency: data.currency || "INR",
             };
@@ -309,7 +309,7 @@ export default function InvoicePreview() {
           setProfile(normalized);
           try {
             writeJSON("business_profile", normalized);
-          } catch {}
+          } catch { }
         }
       } catch (err) {
         console.warn("Error fetching profile:", err);
@@ -339,7 +339,7 @@ export default function InvoicePreview() {
     return () => {
       try {
         document.title = prev;
-      } catch {}
+      } catch { }
     };
   }, [invoice]);
 
@@ -549,19 +549,18 @@ export default function InvoicePreview() {
                     Status:
                   </span>
                   <span
-                    className={`${invoicePreviewStyles.invoiceDetailValue} ${
-                      invoice.status === "paid"
+                    className={`${invoicePreviewStyles.invoiceDetailValue} ${invoice.status === "paid"
                         ? invoicePreviewStyles.statusPaid
                         : invoice.status === "unpaid"
-                        ? invoicePreviewStyles.statusUnpaid
-                        : invoice.status === "overdue"
-                        ? invoicePreviewStyles.statusOverdue
-                        : invoicePreviewStyles.statusDraft
-                    }`}
+                          ? invoicePreviewStyles.statusUnpaid
+                          : invoice.status === "overdue"
+                            ? invoicePreviewStyles.statusOverdue
+                            : invoicePreviewStyles.statusDraft
+                      }`}
                   >
                     {invoice.status
                       ? invoice.status.charAt(0).toUpperCase() +
-                        invoice.status.slice(1)
+                      invoice.status.slice(1)
                       : "Draft"}
                   </span>
                 </div>

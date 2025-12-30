@@ -52,7 +52,7 @@ function readJSON(key, fallback = null) {
 function writeJSON(key, val) {
   try {
     localStorage.setItem(key, JSON.stringify(val));
-  } catch {}
+  } catch { }
 }
 
 /* ---------- local invoices helpers (fallback) ---------- */
@@ -68,7 +68,7 @@ function uid() {
   try {
     if (typeof crypto !== "undefined" && crypto.randomUUID)
       return crypto.randomUUID();
-  } catch {}
+  } catch { }
   return Math.random().toString(36).slice(2, 9);
 }
 function currencyFmt(amount = 0, currency = "INR") {
@@ -197,7 +197,7 @@ export default function CreateInvoice() {
   const obtainToken = useCallback(async () => {
     if (typeof getToken !== "function") return null;
     try {
-      let token = await getToken({ template: "default" }).catch(() => null);
+      let token = await getToken().catch(() => null);
       if (!token) {
         token = await getToken({ forceRefresh: true }).catch(() => null);
       }
@@ -299,10 +299,10 @@ export default function CreateInvoice() {
       setInvoice((inv) =>
         inv
           ? {
-              ...inv,
-              [`${kind}DataUrl`]: dataUrl,
-              ...(kind === "logo" ? { logoDataUrl: dataUrl } : {}),
-            }
+            ...inv,
+            [`${kind}DataUrl`]: dataUrl,
+            ...(kind === "logo" ? { logoDataUrl: dataUrl } : {}),
+          }
           : inv
       );
     };
@@ -312,10 +312,10 @@ export default function CreateInvoice() {
     setInvoice((inv) =>
       inv
         ? {
-            ...inv,
-            [`${kind}DataUrl`]: null,
-            ...(kind === "logo" ? { logoDataUrl: null } : {}),
-          }
+          ...inv,
+          [`${kind}DataUrl`]: null,
+          ...(kind === "logo" ? { logoDataUrl: null } : {}),
+        }
         : inv
     );
   }
@@ -512,8 +512,8 @@ export default function CreateInvoice() {
           Array.isArray(invoiceFromState.items)
             ? invoiceFromState.items.slice()
             : invoiceFromState.items
-            ? [...invoiceFromState.items]
-            : buildDefaultInvoice().items
+              ? [...invoiceFromState.items]
+              : buildDefaultInvoice().items
         );
 
         return;
@@ -855,8 +855,8 @@ export default function CreateInvoice() {
             {loading
               ? "Saving..."
               : isEditing
-              ? "Update Invoice"
-              : "Create Invoice"}
+                ? "Update Invoice"
+                : "Create Invoice"}
           </button>
         </div>
       </div>
@@ -926,11 +926,10 @@ export default function CreateInvoice() {
             <div className={createInvoiceStyles.currencyContainer}>
               <button
                 onClick={() => handleCurrencyChange("INR")}
-                className={`${createInvoiceStyles.currencyButton} ${
-                  invoice.currency === "INR"
+                className={`${createInvoiceStyles.currencyButton} ${invoice.currency === "INR"
                     ? createInvoiceStyles.currencyButtonActive1
                     : createInvoiceStyles.currencyButtonInactive
-                }`}
+                  }`}
               >
                 <span className={createInvoiceCustomStyles.currencySymbol}>
                   ₹
@@ -943,11 +942,10 @@ export default function CreateInvoice() {
 
               <button
                 onClick={() => handleCurrencyChange("USD")}
-                className={`${createInvoiceStyles.currencyButton} ${
-                  invoice.currency === "USD"
+                className={`${createInvoiceStyles.currencyButton} ${invoice.currency === "USD"
                     ? createInvoiceStyles.currencyButtonActive2
                     : createInvoiceStyles.currencyButtonInactive
-                }`}
+                  }`}
               >
                 <span className={createInvoiceCustomStyles.currencySymbol}>
                   $
@@ -975,11 +973,10 @@ export default function CreateInvoice() {
                 <button
                   key={status.value}
                   onClick={() => handleStatusChange(status.value)}
-                  className={`${createInvoiceStyles.statusButton} ${
-                    invoice.status === status.value
+                  className={`${createInvoiceStyles.statusButton} ${invoice.status === status.value
                       ? createInvoiceStyles.statusButtonActive
                       : createInvoiceStyles.statusButtonInactive
-                  }`}
+                    }`}
                 >
                   <StatusBadge
                     status={status.label}

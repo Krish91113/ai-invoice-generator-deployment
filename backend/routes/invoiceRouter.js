@@ -6,7 +6,7 @@ const invoiceRouter = express.Router();
 
 invoiceRouter.use(clerkMiddleware());
 
-invoiceRouter.use('/', getInvoices);
+invoiceRouter.get('/', getInvoices);
 invoiceRouter.get('/:id', getInvoiceById);
 invoiceRouter.post('/', createInvoice);
 invoiceRouter.put('/:id', updateInvoice);

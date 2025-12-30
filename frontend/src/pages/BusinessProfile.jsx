@@ -120,7 +120,7 @@ function BusinessProfile() {
   async function getAuthToken() {
     if (typeof getToken !== "function") return null;
     try {
-      let t = await getToken({ template: "default" }).catch(() => null);
+      let t = await getToken().catch(() => null);
       if (!t) t = await getToken({ forceRefresh: true }).catch(() => null);
       return t;
     } catch {
@@ -220,8 +220,8 @@ function BusinessProfile() {
       kind === "logo"
         ? "logoUrl"
         : kind === "stamp"
-        ? "stampUrl"
-        : "signatureUrl",
+          ? "stampUrl"
+          : "signatureUrl",
       objUrl
     );
   }
@@ -238,8 +238,8 @@ function BusinessProfile() {
       kind === "logo"
         ? "logoUrl"
         : kind === "stamp"
-        ? "stampUrl"
-        : "signatureUrl",
+          ? "stampUrl"
+          : "signatureUrl",
       null
     );
   }
@@ -838,7 +838,7 @@ function BusinessProfile() {
                   {saving ? "Saving...." : "Save Profile"}
                 </button>
                 <button className={businessProfileStyles.resetButton} onClick={handleClearProfile} type="button">
-<ResetIcon className="w-4 h-4" />Clear Profile
+                  <ResetIcon className="w-4 h-4" />Clear Profile
                 </button>
               </div>
             </div>
