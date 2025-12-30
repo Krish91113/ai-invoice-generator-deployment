@@ -7,6 +7,7 @@ import Dashboard from "./pages/Dashboard";
 import CreateInvoice from "./pages/CreateInvoice";
 import Invoices from "./pages/Invoices";
 import InvoicePreview from "./component/InvoicePreview";
+import BusinessProfile from "./pages/BusinessProfile";
 
 const ClerkProtected = ({ children }) => (
   <>
@@ -34,6 +35,7 @@ function App() {
           <Route path="invoices/:id/preview" element={<InvoicePreview/>} />
           <Route path="invoices/:id/edit" element={<CreateInvoice/>} />
           <Route path="create-invoice" element={<CreateInvoice/>} />
+          <Route path="business" element={<BusinessProfile/>} />
         </Route>
       </Routes>
     </div>
