@@ -507,6 +507,23 @@ const Dashboard = () => {
             </div>
           </div>
         </div>
+        <div className={dashboardStyles.contentColumn}>
+          <div className={dashboardStyles.cardContainerOverflow}>
+            <div className={dashboardStyles.tableHeader}>
+              <div className={dashboardStyles.tableHeaderContent}>
+                <div>
+                  <h3 className={dashboardStyles.tableTitle}>
+                    Recent Invoices
+                  </h3>
+                  <p className={dashboardStyles.tableSubtitle}>
+                    Latest 5 invoices from your account
+                  </p>
+                </div>
+                
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
