@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { dashboardStyles } from "../assets/dummyStyles";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@clerk/clerk-react";
+import KpiCard from "../component/KpiCard";
 
 const API_BASE = "http://localhost:4000";
 /* normalize client object */
@@ -158,80 +159,81 @@ const Dashboard = () => {
   const [businessProfile, setBusinessProfile] = useState(null);
 
   // fetch invoices
-  const fetchInvoices = useCallback(async () => {
-    setLoading(true);
-    setError(null);
+  const fetchInvoices = useCallback(
+    async () => {
+      setLoading(true);
+      setError(null);
 
-    try {
-      const token = await obtainToken();
-      const headers = { Accept: "applicatio/json" };
-      if (token) headers["Authorization"] = `Bearer ${token}`;
-      const res = await fetch(`${API_BASE}/api/invoice`, {
-        method: "GET",
-        headers,
-      });
-      const json = await res.json().catch(() => null);
+      try {
+        const token = await obtainToken();
+        const headers = { Accept: "applicatio/json" };
+        if (token) headers["Authorization"] = `Bearer ${token}`;
+        const res = await fetch(`${API_BASE}/api/invoice`, {
+          method: "GET",
+          headers,
+        });
+        const json = await res.json().catch(() => null);
 
-      /* ---------- Component (fetch from backend) ---------- */
-      if (res.status === 401) {
-        // unauthorized - prompt login
-        setError("Unauthorized. Please sign in.");
+        /* ---------- Component (fetch from backend) ---------- */
+        if (res.status === 401) {
+          // unauthorized - prompt login
+          setError("Unauthorized. Please sign in.");
+          setStoredInvoices([]);
+          return;
+        }
+
+        if (!res.ok) {
+          const msg = json?.message || `Failed to fetch (${res.status})`;
+          throw new Error(msg);
+        }
+
+        const raw = json?.data || [];
+        const mapped = (Array.isArray(raw) ? raw : []).map((inv) => {
+          const clientObj = inv.client ?? {};
+          const amountVal = Number(inv.total ?? inv.amount ?? 0);
+          const currency = (inv.currency || "INR").toUpperCase();
+
+          return {
+            ...inv,
+            id: inv.invoiceNumber || inv._id || String(inv._id || ""),
+            client: clientObj,
+            amount: amountVal,
+            currency,
+            // keep status normalized
+            status:
+              typeof inv.status === "string"
+                ? capitalize(inv.status)
+                : inv.status || "Draft",
+          };
+        });
+        setStoredInvoices(mapped);
+      } catch (err) {
+        console.error("Failed to fetch invoices:", err);
+        setError(err?.message || "Failed to load invoices");
         setStoredInvoices([]);
-        return;
+      } finally {
+        setLoading(false);
       }
-
-      if (!res.ok) {
-        const msg = json?.message || `Failed to fetch (${res.status})`;
-        throw new Error(msg);
-      }
-
-      const raw = json?.data || [];
-      const mapped = (Array.isArray(raw) ? raw : []).map((inv) => {
-        const clientObj = inv.client ?? {};
-        const amountVal = Number(inv.total ?? inv.amount ?? 0);
-        const currency = (inv.currency || "INR").toUpperCase();
-
-        return {
-          ...inv,
-          id: inv.invoiceNumber || inv._id || String(inv._id || ""),
-          client: clientObj,
-          amount: amountVal,
-          currency,
-          // keep status normalized
-          status:
-            typeof inv.status === "string"
-              ? capitalize(inv.status)
-              : inv.status || "Draft",
-        };
-      });
-      setStoredInvoices(mapped);
-    } catch (err) {
-      console.error("Failed to fetch invoices:", err);
-      setError(err?.message || "Failed to load invoices");
-      setStoredInvoices([]);
-    }
-	finally{
-		setLoading(false);
-	}
-  },{obtainToken});
-
+    },
+    { obtainToken }
+  );
 
   // fetch user profile
 
-  const fetchBusinessProfile = useCallback(async ()=>{
-	try {
-		const token = await obtainToken();
-		if(!token){
-			return;
-		}
-		const res = await fetch(`${API_BASE}/api/businessProfile/me`, {
-			method : "GET",
-			headers :{
-				Authorization : `Bearer ${token}`,
-				Accept: "application/json",
-			}
-		})
-	 if (res.status === 401) {
+  const fetchBusinessProfile = useCallback(async () => {
+    try {
+      const token = await obtainToken();
+      if (!token) {
+        return;
+      }
+      const res = await fetch(`${API_BASE}/api/businessProfile/me`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: "application/json",
+        },
+      });
+      if (res.status === 401) {
         // silently ignore; profile not available
         return;
       }
@@ -245,17 +247,17 @@ const Dashboard = () => {
     }
   }, [obtainToken]);
 
-  useEffect(()=>{
-	fetchInvoices();
-	fetchBusinessProfile();
-	function onStorage (e) {
-		if(e.key === "invoice_v1") fetchInvoices();
-		window.addEventListener("storage", onStorage);
-		return ()=> window.removeEventListener("storage",onStorage);
-	}
-  }, [fetchInvoices,fetchBusinessProfile,isSignedIn])
+  useEffect(() => {
+    fetchInvoices();
+    fetchBusinessProfile();
+    function onStorage(e) {
+      if (e.key === "invoice_v1") fetchInvoices();
+      window.addEventListener("storage", onStorage);
+      return () => window.removeEventListener("storage", onStorage);
+    }
+  }, [fetchInvoices, fetchBusinessProfile, isSignedIn]);
   const HARD_RATES = {
-    USD_TO_INR: 83, 
+    USD_TO_INR: 83,
   };
 
   function convertToINR(amount = 0, currency = "INR") {
@@ -311,7 +313,6 @@ const Dashboard = () => {
     };
   }, [storedInvoices]);
 
-
   const recent = useMemo(() => {
     return storedInvoices
       .slice()
@@ -322,7 +323,6 @@ const Dashboard = () => {
       )
       .slice(0, 5);
   }, [storedInvoices]);
-
 
   const getClientName = (inv) => {
     if (!inv) return "";
@@ -342,39 +342,64 @@ const Dashboard = () => {
     navigate(`/app/invoices/${invRow.id}`, { state: { invoice: payload } });
   }
 
- 
-  return(
-	<div className={dashboardStyles.pageContainer}>
-    <div className={dashboardStyles.headerContainer}>
-    <h1 className={dashboardStyles.headerTitle}>Dashboard Overview</h1>
-    <p className={dashboardStyles.headerSubtitle}>
-      Track your invoicing performance and business insights
-    </p>
-    </div>
-    {/**loadig and error statement */}
-    {loading ? (
-      <div className="p-6">Loading Invoices.....</div>
-    ): error? (
-      <div className="p-6">
-        <div className="text-red-600">Error : {error}</div>
-        <div className="flex gap-2">
-      <button onClick={fetchInvoices} className="px-3 py-2 bg-blue-600 text-white rouded">
-Retry
-      </button>
-      {String(error).toLowerCase().includes("unauthorized") && (
-        <button className="px-3 py-1 bg-gray-800 text-white rounded" onClick={()=> navigate("/login")}>
-          Sign In
-        </button>
-      )}
-        </div>
+  return (
+    <div className={dashboardStyles.pageContainer}>
+      <div className={dashboardStyles.headerContainer}>
+        <h1 className={dashboardStyles.headerTitle}>Dashboard Overview</h1>
+        <p className={dashboardStyles.headerSubtitle}>
+          Track your invoicing performance and business insights
+        </p>
       </div>
-    ): null}
+      {/**loadig and error statement */}
+      {loading ? (
+        <div className="p-6">Loading Invoices.....</div>
+      ) : error ? (
+        <div className="p-6">
+          <div className="text-red-600">Error : {error}</div>
+          <div className="flex gap-2">
+            <button
+              onClick={fetchInvoices}
+              className="px-3 py-2 bg-blue-600 text-white rouded"
+            >
+              Retry
+            </button>
+            {String(error).toLowerCase().includes("unauthorized") && (
+              <button
+                className="px-3 py-1 bg-gray-800 text-white rounded"
+                onClick={() => navigate("/login")}
+              >
+                Sign In
+              </button>
+            )}
+          </div>
+        </div>
+      ) : null}
 
-    <div className={dashboardStyles.kpiGrid}>
-
+      <div className={dashboardStyles.kpiGrid}>
+        <KpiCard
+          title="Total Invoices"
+          value={kpis.totalInvoices}
+          hint="Active invoices"
+          iconType="document"
+          trend={8.5}
+        />
+        <KpiCard
+          title="Total Paid"
+          value={kpis.totalInvoices}
+          hint="Active invoices"
+          iconType="document"
+          trend={8.5}
+        />
+        <KpiCard
+          title="Total Invoices"
+          value={kpis.totalInvoices}
+          hint="Active invoices"
+          iconType="document"
+          trend={8.5}
+        />
+      </div>
     </div>
-	</div>
-  )
+  );
 };
 
 export default Dashboard;
