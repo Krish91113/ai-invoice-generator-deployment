@@ -1,5 +1,5 @@
-import React from 'react'
-import { kpiCardStyles } from '../assets/dummyStyles'
+import React from "react";
+import { kpiCardStyles } from "../assets/dummyStyles";
 // Modern icon set for different metric types
 const MetricIcons = {
   default: ({ className = "w-6 h-6" }) => (
@@ -70,16 +70,64 @@ const MetricIcons = {
 };
 
 function KpiCard({
-     title,
+  title,
   value,
   hint,
   iconType = "default",
   trend,
   className = "",
 }) {
+  const IconComponent = MetricIcons[iconType] || MetricIcons.default;
+  const getTrendColor = (trendValue) => {
+    if (trendValue > 0) return kpiCardStyles.trendBadgePositive;
+    if (trendValue < 0) return kpiCardStyles.trendBadgeNegative;
+    return kpiCardStyles.trendBadgeNeutral;
+  };
+
+  const getIconColor = (type) => {
+    return kpiCardStyles.iconColors[type] || kpiCardStyles.iconColors.default;
+  };
+
   return (
-    <div>KpiCard</div>
-  )
+    <div className={`${kpiCardStyles.cardContainer} ${className} `}>
+      <div className={kpiCardStyles.animatedBackground}></div>
+
+      <div className={kpiCardStyles.content}>
+        <div className={kpiCardStyles.headerContainer}>
+          <div className={kpiCardStyles.mainContent}>
+            <div className={kpiCardStyles.iconTrendContainer}>
+              <div
+                className={`${kpiCardStyles.iconContainer} ${getIconColor(
+                  iconType
+                )}`}
+              >
+                <IconComponent className={kpiCardStyles.icon} />
+              </div>
+              {trend !== undefined && (
+                <div className={`${kpiCardStyles.trendBadge} ${getTrendColor (
+                    trend
+                )}`}>
+                    <svg
+                    className={`${kpiCardStyles.trendIcon} ${
+                      trend < 0 ? kpiCardStyles.trendIconNegative : ""
+                    }`}
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
+                    <path d="M23 6l-9.5 9.5-5-5L1 18" />
+                    <path d="M17 6h6v6" />
+                  </svg>
+
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 }
 
-export default KpiCard
+export default KpiCard;
