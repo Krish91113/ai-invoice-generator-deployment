@@ -104,10 +104,12 @@ function KpiCard({
                 <IconComponent className={kpiCardStyles.icon} />
               </div>
               {trend !== undefined && (
-                <div className={`${kpiCardStyles.trendBadge} ${getTrendColor (
+                <div
+                  className={`${kpiCardStyles.trendBadge} ${getTrendColor(
                     trend
-                )}`}>
-                    <svg
+                  )}`}
+                >
+                  <svg
                     className={`${kpiCardStyles.trendIcon} ${
                       trend < 0 ? kpiCardStyles.trendIconNegative : ""
                     }`}
@@ -119,19 +121,34 @@ function KpiCard({
                     <path d="M23 6l-9.5 9.5-5-5L1 18" />
                     <path d="M17 6h6v6" />
                   </svg>
-{Math.abs(trend)}
+                  {Math.abs(trend)}
                 </div>
               )}
             </div>
             <div className={kpiCardStyles.textContent}>
-              <div className={kpiCardStyles.title}>
-{title}
-              </div>
+              <div className={kpiCardStyles.title}>{title}</div>
               <div className={kpiCardStyles.value}>{value}</div>
+              {hint && (
+                <div className={kpiCardStyles.hint}>
+                     <svg
+                    className={kpiCardStyles.hintIcon}
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
+                    <circle cx="12" cy="12" r="10" />
+                    <line x1="12" y1="16" x2="12" y2="12" />
+                    <line x1="12" y1="8" x2="12.01" y2="8" />
+                  </svg>
+                  {hint}
+                </div>
+              )}
             </div>
           </div>
         </div>
       </div>
+      <div></div>
     </div>
   );
 }
