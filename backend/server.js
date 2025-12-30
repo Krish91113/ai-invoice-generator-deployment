@@ -20,7 +20,7 @@ const _dirname =path.resolve();
 //MIDDLEWAREs
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: "https://ai-invoice-generator-5tpt.onrender.com",
     credentials: true,
   })
 );
