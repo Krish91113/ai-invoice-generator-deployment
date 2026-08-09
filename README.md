@@ -285,6 +285,6 @@ https://ai-invoice-generator-5tpt.onrender.com/
 
 **Krish**
 
-GitHub: https://github.com/yourusername
+GitHub: https://github.com/Krish91113
 
-LinkedIn: https://linkedin.com/in/yourprofile
+LinkedIn: https://www.linkedin.com/in/krish9113/
